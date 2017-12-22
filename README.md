@@ -88,54 +88,50 @@ end
 
 ## Options
 
-`path (string)`
+### path (string)
 
 Parameter Storeのパラメータを検索する階層です。  
 `/`から始まる必要があります。デフォルトは`/`です。
 
-`recursive (bool)`
+### recursive (bool)
 
 階層を再帰的に検索するかどうかのフラグです。  
 `true`を指定した場合、`path`で指定した階層のサブパスまで検索します。  
 デフォルトは`false`(`path`で指定した階層のみ)です。
 
-`overwrite (bool)`
+### overwrite (bool)
 
 すでにある環境変数を上書きするかどうかのフラグです。  
 `true`を指定した場合、プロセスの環境変数をParameter Storeの値で上書きします。  
 デフォルトは`false`です。
 
-`decryption (bool)`
+`overwrite`を指定しなくても上書きするための`call!`メソッドもあります。  
+挙動としては、`call(overwrite: true)`と全く同じです。
+
+### decryption (bool)
 
 Parameter Storeのパラメータのタイプが`SecureString`の値を復号化するかどうかのフラグです。  
 `true`を指定した場合、環境変数の値には復号化された値が格納されます。  
 このためにあるgemなので、デフォルトが`true`です。
 
-`fetch_size (int)`
+### fetch_size (int)
 
 一度のAPIコールで取得するパラメータの個数で最大値は`10`です。デフォルトは`10`です。  
 通常、この値を指定する必要はありません。
 
 
-`filters (Array)`
+### filters (Array)
 
 `Aws::SSM::Client#get_parameters_by_path`の`parameter_filters`引数に渡されるフィルタ条件の配列です。  
 詳細は`aws-sdk-ruby`の[ドキュメント](http://docs.aws.amazon.com/sdkforruby/api/Aws/SSM/Types/ParameterStringFilter.html)を御覧ください。  
 デフォルトは空です。
 
-`ssm_client_args (Hash)`
+### ssm_client_args (Hash)
 
 `Aws::SSM::Client.new`に渡される引数です。独自の認証情報を渡す場合や、エンドポイント、リージョンなどを指定する場合に使います。  
 デフォルトは`{}`で、認証情報には環境変数やEC2インスタンスプロファイルが利用されます。
 
-`fetcher (AwsSsmEnv::Fetcher)`
-
-独自のパラメータ取得処理を使う場合に指定します。パラメータの取得方法を細かく制御したい場合に利用します。  
-`each`メソッドが実装されたインスタンスであれば何を指定しても問題ありません。  
-`each`メソッドの中でブロックに渡す引数は`name`と`value`というプロパティないしはGetterを持っている必要があります。  
-デフォルトは`ssm:GetParametersByPath`を利用した`AwsSsmEnv::PathFetcher`のインスタンスが利用されます。
-
-`naming (AwsSsmEnv::NamingStrategy)`
+### naming (AwsSsmEnv::NamingStrategy)
 
 環境変数名をカスタマイズする場合に指定します。`parse_name(parameter)`というメソッドが実装されたインスタンスであれば何を指定しても問題ありません。  
 引数の`parameter`には通常、[Aws::SSM::Types::GetParametersByPathResult](http://docs.aws.amazon.com/sdkforruby/api/Aws/SSM/Types/GetParametersByPathResult.html)が渡されます。  
@@ -152,4 +148,40 @@ naming_strategy = Class.new {
   end
 }.new
 AwsSsmEnv::Loader.call(path: '/staging', naming: naming_strategy)
+```
+
+### fetcher (AwsSsmEnv::Fetcher)
+
+独自のパラメータ取得処理を使う場合に指定します。パラメータの取得方法を細かく制御したい場合に利用します。  
+`each`メソッドが実装されたインスタンスであれば何を指定しても問題ありませんが、`AwsSsmEnv::Fetcher`を継承したクラスであれば`fetch`メソッドを実装するだけですみます。  
+`each`メソッドの中でブロックに渡す引数は`name`と`value`というプロパティを持っている必要があります。  
+デフォルトは`ssm:GetParametersByPath`を利用した`AwsSsmEnv::PathFetcher`のインスタンスが利用されます。
+
+`AwsSsmEnv::Fetcher`の実装は以下のようになっています。
+
+```ruby
+# 文脈に無関係なコードは割愛しています
+module AwsSsmEnv
+  class Fetcher
+    def each
+      fetch!
+      until eos?
+        fetch! if needs_fetch?
+        yield(@parameters[@current_index])
+        @current_index += 1
+      end
+    end
+
+    protected
+
+    def fetch; end
+
+    def fetch!
+      results = self.fetch
+      @parameters = results.parameters
+      @next_token = results.next_token
+      @current_index = 0
+    end
+  end
+end
 ```
