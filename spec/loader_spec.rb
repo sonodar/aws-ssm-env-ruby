@@ -21,15 +21,15 @@ describe AwsSsmEnv::Loader do
     end
 
     it 'すでに環境変数が存在する場合は上書きしないこと' do
-      ENV['HAGE'] = 'はげ'
+      ENV['HAGE'] = 'hagechirakashiteru'
       described_class.call(client: client, path: '/path')
-      expect(ENV['HAGE']).to eq('はげ')
+      expect(ENV['HAGE']).to eq('hagechirakashiteru')
     end
   end
 
   describe '#call!' do
     it 'EC2 Parameter Storeの値が環境変数に上書きで設定されていること' do
-      ENV['HAGE'] = 'はげ'
+      ENV['HAGE'] = 'hagechirakashiteru'
       described_class.call!(client: client, path: '/path')
       expect(ENV['HOGE']).to eq('hoge')
       expect(ENV['HAGE']).to eq('hage')
