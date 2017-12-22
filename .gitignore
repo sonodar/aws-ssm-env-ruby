@@ -1,0 +1,11 @@
+*.gem
+*.rbc
+.bundle
+.config
+.ruby-version
+.yardoc
+Gemfile.lock
+tmp
+vendor
+.DS_Store
+coverage
