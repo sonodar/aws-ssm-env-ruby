@@ -1,1 +1,1 @@
-require "aws-ssm-env/loader"
+require 'aws-ssm-env/loader'

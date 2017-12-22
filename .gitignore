@@ -9,3 +9,5 @@ tmp
 vendor
 .DS_Store
 coverage
+reports/*
+!reports/index.html

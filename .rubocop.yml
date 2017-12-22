@@ -3,9 +3,6 @@ require: rubocop-rspec
 AllCops:
   DisplayCopNames: true
 
-Rails:
-  Enabled: true
-
 # コメントは日本語も書く
 AsciiComments:
   Enabled: false
@@ -14,28 +11,13 @@ AsciiComments:
 Style/Documentation:
   Enabled: false
 
-# [hoge] この内側のスペースはない方が好き
-Layout/SpaceInsideBrackets:
+# gemなのでハイフンも許可したい
+Style/FileName:
   Enabled: false
 
 # 横は120文字までOK
 Metrics/LineLength:
   Max: 120
-
-# RailsのDSLになっているblockが大きくなることは（当然）許容する
-Metrics/BlockLength:
-  ExcludedMethods:
-    # rspecのblockは大きくても仕方ない
-    - 'describe'
-    - 'context'
-    - 'include_context'
-    # Moduleのincludeが大きくなるのも仕方ない
-    - 'included'
-    # routesは大きくなる
-    - 'draw'
-    - 'namespace'
-    # FactoryGirlも大きくなるのは仕方ない
-    - 'define'
 
 # メソッド10行の初期設定は厳しすぎるので15行に延長
 # 複雑さを増やしていないのでメソッドの長さからコメントは除外
@@ -63,48 +45,25 @@ Style/FrozenStringLiteralComment:
 Style/GuardClause:
   MinBodyLength: 4
 
-# letよりsubjectが上に来るべき、という設定
-# letで前提条件の変数を整えてsubjectに放り込むイメージなので無効にする
-RSpec/LeadingSubject:
-  Enabled: false
-
-# let!を使うな、という設定
-# 使いたいので無効にする。
-RSpec/LetSetup:
-  Enabled: false
-
-# デフォルト値は3だったけどrspecは6ぐらい必要なので。
-RSpec/NestedGroups:
-  Max: 6
-
 # デフォルト値は5。もうちょっとだけ複雑なexampleを書きたい。
 RSpec/ExampleLength:
   Max: 6
 
-# 空のexampleを許可しないのは良いけど、shared_examplesで空のcontext, describeはあるので。
-RSpec/EmptyExampleGroup:
-  Enabled: false
-
-
-# map {|x| x.to_s} みたいなコードを map(&:to_s)にしなさいという設定
-# rspecの中ではバグっぽい挙動になるのでExcludeする
-# https://github.com/bbatsov/rubocop/issues/4222
-Lint/AmbiguousBlockAssociation:
-  Exclude:
-    - "spec/**/*"
-
-# inspeting中にエラーを起こすので無効。直ったらONにする。
-# 以下issueで報告されており、Mar 28, 2017にmerged。次バージョンではfixされるはず。
-# https://github.com/bbatsov/rubocop/issues/4179
-Rails/Blank:
-  Enabled: false
-
-# allow(hoge).to の後にreceive or have_receiveのどちらがくるか
-# Railsではis_とかhave_とかはあまり好まれないし、文字数が少ないreceiveを使う
-RSpec/MessageSpies:
-  EnforcedStyle: receive
-
 # allow_any_instance_ofを使ってはいけない、というルール
 # shared_contextで事前に設定ができなくなるので却下
 RSpec/AnyInstance:
+  Enabled: false
+
+# いまどき末尾カンマは許可しないとダメでしょ
+Style/TrailingCommaInArguments:
+  Enabled: false
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
+# gemなので命名規約にうるさくしないでほしい
+RSpec/FilePath:
+  Enabled: false
+
+# 長いテストケースを許容
+RSpec/ExampleLength:
   Enabled: false

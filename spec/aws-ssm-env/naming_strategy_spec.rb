@@ -1,4 +1,4 @@
-require "spec_helper"
+require 'spec_helper'
 
 class NameValue
   attr_accessor :name
@@ -8,7 +8,6 @@ class NameValue
 end
 
 describe AwsSsmEnv::NamingStrategy do
-
   describe AwsSsmEnv::BasenameNamingStrategy do
     let!(:strategy) { AwsSsmEnv::BasenameNamingStrategy.new }
 
@@ -17,7 +16,5 @@ describe AwsSsmEnv::NamingStrategy do
       expect(strategy.parse_name(NameValue.new('ENVIRONMENT_NAME'))).to eq('ENVIRONMENT_NAME')
       expect(strategy.parse_name(NameValue.new('/path/to/environment.name'))).to eq('environment.name')
     end
-
   end
-
 end

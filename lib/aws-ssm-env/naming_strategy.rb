@@ -1,5 +1,4 @@
 module AwsSsmEnv
-
   class NamingStrategy
     def parse_name(parameter); end
   end
@@ -9,5 +8,4 @@ module AwsSsmEnv
       File.basename(parameter.name)
     end
   end
-
 end

@@ -3,7 +3,6 @@ require 'aws-ssm-env/naming_strategy'
 
 module AwsSsmEnv
   class Loader
-
     class << self
       def call(**args)
         new(args).call
@@ -17,11 +16,11 @@ module AwsSsmEnv
     def initialize(**args)
       @fetcher = fetcher(args)
       @naming_strategy = naming_strategy(args)
-      if overwrite?(args[:overwrite])
-        @applier = ->(name, value) { ENV[name] = value }
-      else
-        @applier = ->(name, value) { ENV[name] ||= value }
-      end
+      @applier = if overwrite?(args[:overwrite])
+                   ->(name, value) { ENV[name] = value }
+                 else
+                   ->(name, value) { ENV[name] ||= value }
+                 end
     end
 
     attr_reader :fetcher, :naming_strategy
@@ -52,8 +51,7 @@ module AwsSsmEnv
     end
 
     def overwrite?(overwrite)
-      !overwrite.nil? && overwrite === true
+      !overwrite.nil? && overwrite == true
     end
-
   end
 end

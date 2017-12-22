@@ -1,0 +1,112 @@
+stages:
+  - test
+  - build
+  - deploy
+
+variables:
+  LANG: ja_JP.UTF-8
+  TZ: Asia/Tokyo
+  RUBYOPT: -EUTF-8
+
+.test: &test
+  image: ruby:2.4
+  cache:
+    untracked: true
+    paths:
+      - vendor/ruby
+  before_script:
+    - bundle install -j $(nproc) --path vendor
+
+rspec:
+  <<: *test
+  script:
+    - rm -rf coverage/*
+    - bundle exec rspec --format html --out reports/rspec-results.html
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - coverage
+      - reports/rspec-results.html
+
+rubocop:
+  <<: *test
+  script:
+    - bundle exec rubocop --fail-level C -f html -o reports/rubocop.html
+  except:
+    - master
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - reports/rubocop.html
+
+review_app:
+  when: always
+  tags:
+    - html-reviewapp
+    - ci-docker1
+  stage: deploy
+  script:
+    - test -e coverage && (rm -rf reports/coverage; mv coverage reports/coverage)
+    - test -e reports/coverage && rm -f reports/coverage/.resultset.json*
+    - setup_permission --access-code
+    - deploy_reviewapp reports/ $CI_COMMIT_REF_SLUG
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: http://ci-docker1:8080/$CI_PROJECT_PATH_SLUG/$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_app
+  except:
+    - master
+  dependencies:
+    - rspec
+    - rubocop
+
+stop_review_app:
+  when: manual
+  tags:
+    - html-reviewapp
+    - ci-docker1
+  stage: deploy
+  variables:
+    GIT_STRATEGY: none
+  script:
+    - undeploy_reviewapp reports/ $CI_COMMIT_REF_SLUG
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+  except:
+    - master
+
+build-gem:
+  stage: build
+  image: ruby:2.4
+  before_script:
+    - gem install --no-ri --no-rdoc builder
+    - rm -rf pkg; mkdir -p pkg/gems
+  script:
+    - rake build && mv pkg/*.gem pkg/gems/
+    - cd pkg; gem generate_index
+  only:
+    - tags
+  artifacts:
+    expire_in: 1 week
+    when: always
+    paths:
+      - pkg
+
+upload-nexus:
+  stage: deploy
+  image: ruby:2.4
+  variables:
+    GIT_STRATEGY: none
+    NEXUS_URL: https://code.m3.com/nexus/content/repositories/rubygems
+  before_script:
+    - gem install --no-ri --no-rdoc nexus
+    - export NEXUS_CREDS="${NEXUS_USER}:${NEXUS_PASS}"
+  script:
+    - gem nexus --url "${NEXUS_URL}" --credential "${NEXUS_CREDS}" pkg/gems/aws-ssm-env-*.gem
+  only:
+    - tags
+  dependencies:
+    - build-gem
