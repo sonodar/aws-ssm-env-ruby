@@ -22,6 +22,7 @@ describe AwsSsmEnv::BeginsWithFetcher do
 
     context 'when :begins_with is not Array' do
       let(:args) { { begins_with: '/foo' } }
+
       it 'parameter_filter[:values] is [ begins_with value ]' do
         expect(parameter_filter[:values]).to eq([ args[:begins_with] ])
       end
@@ -29,6 +30,7 @@ describe AwsSsmEnv::BeginsWithFetcher do
 
     context 'when :fetch_size was set and less than 50' do
       let(:args) { { begins_with: '/foo', fetch_size: 49 } }
+
       it '@base_params[:max_results] is fetch_size value' do
         expect(base_params[:max_results]).to eq(49)
       end
@@ -36,12 +38,15 @@ describe AwsSsmEnv::BeginsWithFetcher do
 
     context 'when :fetch_size was not set' do
       let(:args) { { begins_with: '/foo', fetch_size: nil } }
+
       it '@base_params[:max_results] is 50' do
         expect(base_params[:max_results]).to eq(50)
       end
     end
+
     context 'when :fetch_size > 50' do
       let(:args) { { begins_with: '/foo', fetch_size: 51 } }
+
       it '@base_params[:max_results] is 50' do
         expect(base_params[:max_results]).to eq(50)
       end
@@ -52,7 +57,7 @@ describe AwsSsmEnv::BeginsWithFetcher do
     let(:client) { fetcher.send(:client) }
 
     context 'when describe_parameters return empty parameters' do
-      before :each do
+      before do
         allow_any_instance_of(Aws::SSM::Client).to \
           receive(:describe_parameters).and_return(AwsSsmEnv::FetchResult::EMPTY)
       end
@@ -81,7 +86,8 @@ describe AwsSsmEnv::BeginsWithFetcher do
     context 'when describe_parameters return not empty parameters' do
       let!(:dummy_parameters) { [ Parameter.new('foo'), Parameter.new('bar') ] }
       let!(:dummy_response) { AwsSsmEnv::FetchResult.new(dummy_parameters, 'next_token') }
-      before :each do
+
+      before do
         allow_any_instance_of(Aws::SSM::Client).to \
           receive(:describe_parameters).and_return(dummy_response)
         allow_any_instance_of(Aws::SSM::Client).to \
@@ -97,7 +103,4 @@ describe AwsSsmEnv::BeginsWithFetcher do
       end
     end
   end
-
-  # TODO: AWS Integration
-  describe '#fetch at integration', integration: true
 end

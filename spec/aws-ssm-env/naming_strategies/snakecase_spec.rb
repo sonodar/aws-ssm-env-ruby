@@ -10,6 +10,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
     context 'when :removed_prefix was not set' do
       context 'when :begins_with was not set' do
         let(:args) { {} }
+
         it 'return converted path hierarchy into snake case' do
           expect(env_name).to eq('PATH.TO.DB_PASSWORD')
         end
@@ -17,6 +18,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
 
       context 'when :begins_with was set' do
         let(:args) { { begins_with: 'path.to.' } }
+
         it 'return converted path hierarchy without begins_with into snake case' do
           expect(env_name).to eq('DB_PASSWORD')
         end
@@ -24,6 +26,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
 
       context 'when :path was set' do
         let(:args) { { path: 'path.to.' } }
+
         it 'return converted path hierarchy without begins_with into snake case' do
           expect(env_name).to eq('DB_PASSWORD')
         end
@@ -33,6 +36,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
     context 'when :removed_prefix was set' do
       context 'when :begins_with was not set' do
         let(:args) { { removed_prefix: 'path.' } }
+
         it 'return converted path hierarchy without removed_prefix into snake case' do
           expect(env_name).to eq('TO.DB_PASSWORD')
         end
@@ -40,6 +44,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
 
       context 'when :begins_with was set' do
         let(:args) { { removed_prefix: 'path.', begins_with: 'path.to.' } }
+
         it 'return converted path hierarchy without removed_prefix into snake case' do
           expect(env_name).to eq('TO.DB_PASSWORD')
         end
@@ -47,6 +52,7 @@ describe AwsSsmEnv::SnakeCaseNamingStrategy do
 
       context 'when :path was set' do
         let(:args) { { removed_prefix: 'path.', path: 'path.to.' } }
+
         it 'return converted path hierarchy without removed_prefix into snake case' do
           expect(env_name).to eq('TO.DB_PASSWORD')
         end

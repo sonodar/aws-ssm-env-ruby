@@ -6,6 +6,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
 
     context 'when naming was not set' do
       let(:args) { { naming: nil } }
+
       it 'return AwsSsmEnv::BasenameNamingStrategy' do
         expect(naming_strategy).to be_a(AwsSsmEnv::BasenameNamingStrategy)
       end
@@ -13,6 +14,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
 
     context 'when naming is :basename' do
       let(:args) { { naming: :basename } }
+
       it 'return AwsSsmEnv::BasenameNamingStrategy' do
         expect(naming_strategy).to be_a(AwsSsmEnv::BasenameNamingStrategy)
       end
@@ -20,6 +22,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
 
     context 'when naming is :snakecase' do
       let(:args) { { naming: :snakecase } }
+
       it 'return AwsSsmEnv::SnakeCaseNamingStrategy' do
         expect(naming_strategy).to be_a(AwsSsmEnv::SnakeCaseNamingStrategy)
       end
@@ -29,6 +32,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
       let(:naming_class) { Class.new(AwsSsmEnv::NamingStrategy) { def parse_name(_); end } }
       let(:naming_instance) { naming_class.new }
       let(:args) { { naming: naming_instance } }
+
       it 'return it as is' do
         expect(naming_strategy).to eq(naming_instance)
       end
@@ -38,6 +42,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
       let(:naming_class) { Class.new { def parse_name(_); end } }
       let(:naming_instance) { naming_class.new }
       let(:args) { { naming: naming_instance } }
+
       it 'return it as is' do
         expect(naming_strategy).to eq(naming_instance)
       end

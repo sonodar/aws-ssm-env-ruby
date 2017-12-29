@@ -27,6 +27,7 @@ describe AwsSsmEnv::PathFetcher do
 
     context 'when recursive is truthy string' do
       let(:args) { { path: '/path', recursive: 'TruE' } }
+
       it '@base_params[:recursive] is true' do
         expect(base_params[:recursive]).to be_truthy
       end
@@ -34,6 +35,7 @@ describe AwsSsmEnv::PathFetcher do
 
     context 'when recursive is not truthy string' do
       let(:args) { { path: '/path', recursive: 'foo' } }
+
       it '@base_params[:recursive] is false' do
         expect(base_params[:recursive]).to be_falsey
       end
@@ -41,6 +43,7 @@ describe AwsSsmEnv::PathFetcher do
 
     context 'when :fetch_size was set and less than 10' do
       let(:args) { { path: '/path', fetch_size: 5 } }
+
       it '@base_params[:max_results] is fetch_size value' do
         expect(base_params[:max_results]).to eq(5)
       end
@@ -54,6 +57,7 @@ describe AwsSsmEnv::PathFetcher do
 
     context 'when :fetch_size is nil' do
       let(:args) { { path: '/path', fetch_size: nil } }
+
       it '@base_params[:max_results] is 10' do
         expect(base_params[:max_results]).to eq(10)
       end
@@ -61,6 +65,7 @@ describe AwsSsmEnv::PathFetcher do
 
     context 'when :fetch_size > 10' do
       let(:args) { { path: '/path', fetch_size: 11 } }
+
       it '@base_params[:max_results] is 10' do
         expect(base_params[:max_results]).to eq(10)
       end
@@ -68,7 +73,7 @@ describe AwsSsmEnv::PathFetcher do
   end
 
   describe '#fetch' do
-    before :each do
+    before do
       allow_any_instance_of(Aws::SSM::Client).to \
         receive(:get_parameters_by_path).and_return(nil)
     end
@@ -92,7 +97,4 @@ describe AwsSsmEnv::PathFetcher do
       end
     end
   end
-
-  # TODO: AWS Integration
-  describe '#fetch at integration', integration: true
 end

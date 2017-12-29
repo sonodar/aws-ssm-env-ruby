@@ -39,6 +39,9 @@ Style/Semicolon:
 Style/ConditionalAssignment:
   EnforcedStyle: assign_inside_condition
 
+Style/GuardClause:
+  MinBodyLength: 4
+
 Metrics/LineLength:
   Max: 120
   Exclude:
@@ -46,6 +49,10 @@ Metrics/LineLength:
 
 Metrics/MethodLength:
   Max: 15
+
+Metrics/BlockLength:
+  Exclude:
+    - 'spec/**/*.rb'
 
 Performance/Casecmp:
   Enabled: false
@@ -63,4 +70,14 @@ RSpec/MultipleDescribes:
   Enabled: false
 
 RSpec/InstanceVariable:
+  Enabled: false
+
+RSpec/NestedGroups:
+  Max: 6
+
+RSpec/MultipleExpectations:
+  Max: 4
+
+# don't use closable resource
+RSpec/BeforeAfterAll:
   Enabled: false

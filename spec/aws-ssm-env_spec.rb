@@ -63,7 +63,7 @@ describe AwsSsmEnv do
       { name: 'test.aws-ssm-env.username', value: 'db_username', type: :String },
       { name: 'test.aws-ssm-env.roles', value: 'admin,guest', type: :StringList },
     ].freeze
-    ENV_NAMES = %w(db_password username roles).freeze
+    ENV_NAMES = %w[db_password username roles].freeze
 
     def remove_env_all
       ENV_NAMES.each do |name|
@@ -84,7 +84,7 @@ describe AwsSsmEnv do
       end
     end
 
-    before :each do
+    before do
       remove_env_all
     end
 
@@ -92,7 +92,7 @@ describe AwsSsmEnv do
       @client.delete_parameters(names: PARAMETERS.map { |p| p[:name] })
     end
 
-    after :each do
+    after do
       remove_env_all
     end
 

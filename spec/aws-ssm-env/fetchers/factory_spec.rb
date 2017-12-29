@@ -7,6 +7,7 @@ describe AwsSsmEnv::FetcherFactory do
     context 'when fetch was not set' do
       context 'when begins_with was not set' do
         let(:args) { { path: '/path' } }
+
         it 'return AwsSsmEnv::PathFetcher' do
           expect(fetcher).to be_a(AwsSsmEnv::PathFetcher)
         end
@@ -14,6 +15,7 @@ describe AwsSsmEnv::FetcherFactory do
 
       context 'when begins_with was set' do
         let(:args) { { begins_with: '/path' } }
+
         it 'return AwsSsmEnv::BeginsWithFetcher' do
           expect(fetcher).to be_a(AwsSsmEnv::BeginsWithFetcher)
         end
@@ -22,6 +24,7 @@ describe AwsSsmEnv::FetcherFactory do
 
     context 'when fetch is :path' do
       let(:args) { { fetch: :path, path: '/path' } }
+
       it 'return AwsSsmEnv::PathFetcher' do
         expect(fetcher).to be_a(AwsSsmEnv::PathFetcher)
       end
@@ -29,6 +32,7 @@ describe AwsSsmEnv::FetcherFactory do
 
     context 'when fetch is :begins_with' do
       let(:args) { { fetch: :begins_with, begins_with: '/path' } }
+
       it 'return AwsSsmEnv::BeginsWithFetcher' do
         expect(fetcher).to be_a(AwsSsmEnv::BeginsWithFetcher)
       end
@@ -38,6 +42,7 @@ describe AwsSsmEnv::FetcherFactory do
       let(:fetcher_class) { Class.new(AwsSsmEnv::Fetcher) { def fetch(_); end } }
       let(:fetcher_instance) { fetcher_class.new }
       let(:args) { { fetch: fetcher_instance } }
+
       it 'return it as is' do
         expect(fetcher).to eq(fetcher_instance)
       end
@@ -45,6 +50,7 @@ describe AwsSsmEnv::FetcherFactory do
 
     context 'when fetch has each method' do
       let(:args) { { fetch: [] } }
+
       it 'return it as is' do
         expect(fetcher).to eq([])
       end

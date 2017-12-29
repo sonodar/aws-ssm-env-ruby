@@ -20,6 +20,7 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when decryption is nil' do
       let(:args) { { decryption: nil } }
+
       it 'with_decryption is true' do
         expect(fetcher.send(:with_decryption)).to be_truthy
       end
@@ -27,6 +28,7 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when decryption is truthy string' do
       let(:args) { { decryption: 'TrUe' } }
+
       it 'with_decryption is true' do
         expect(fetcher.send(:with_decryption)).to be_truthy
       end
@@ -34,6 +36,7 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when decryption is not truthy string' do
       let(:args) { { decryption: 'foo' } }
+
       it 'with_decryption is false' do
         expect(fetcher.send(:with_decryption)).to be_falsey
       end
@@ -42,6 +45,7 @@ describe AwsSsmEnv::Fetcher do
     context 'when client was not set' do
       context 'when ssm_client_args was set' do
         let(:args) { { ssm_client_args: ssm_client_args } }
+
         it 'client is initialized by ssm_client_args' do
           expect(client.config[:access_key_id]).to eq('access_key_id')
           expect(client.config[:secret_access_key]).to eq('secret_access_key')
@@ -59,6 +63,7 @@ describe AwsSsmEnv::Fetcher do
       context 'when client is instance of Aws::SSM::Client' do
         let(:ssm_client) { Aws::SSM::Client.new }
         let(:args) { { client: ssm_client } }
+
         it 'client is equals to args[:client]' do
           expect(client).to eq(ssm_client)
         end
@@ -67,6 +72,7 @@ describe AwsSsmEnv::Fetcher do
       context 'when client is not instance of Aws::SSM::Client' do
         let(:ssm_client) { 'foo' }
         let(:args) { { client: ssm_client, ssm_client_args: ssm_client_args } }
+
         it 'client is not equals to args[:client] and client is initialized by ssm_client_args' do
           expect(client).not_to eq(ssm_client)
           expect(client.config[:access_key_id]).to eq('access_key_id')
@@ -88,6 +94,7 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when fetch returns empty parameters at first' do
       let(:dummy_response) { AwsSsmEnv::FetchResult::EMPTY }
+
       it 'consumer is not called' do
         called = false
         fetcher.each do |_|
@@ -99,6 +106,7 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when fetch returns two parameters at first and empty next_token' do
       let(:dummy_response) { AwsSsmEnv::FetchResult.new(parameters, nil) }
+
       it 'consumer is called twice' do
         called = 0
         fetcher.each do |_|
@@ -123,6 +131,7 @@ describe AwsSsmEnv::Fetcher do
         end
         mock_class.new(parameters)
       }
+
       it 'consumer is called four times' do
         called = 0
         fetcher.each do |_|
@@ -143,6 +152,7 @@ end
 describe AwsSsmEnv::FetchResult do
   describe '#initialize' do
     subject { described_class.new([], 'next_token') }
+
     it { is_expected.to have_attributes(parameters: [], next_token: 'next_token') }
   end
 end

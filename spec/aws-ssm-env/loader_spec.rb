@@ -22,6 +22,7 @@ describe AwsSsmEnv::Loader do
 
       context 'when overwrite is nil' do
         let(:args) { { path: '/foo', overwrite: nil } }
+
         it '@applier is not overwrite method' do
           expect(applier).to eq(:apply)
         end
@@ -29,6 +30,7 @@ describe AwsSsmEnv::Loader do
 
       context 'when overwrite is truthy string' do
         let(:args) { { path: '/foo', overwrite: 'truE' } }
+
         it '@applier is overwrite method' do
           expect(applier).to eq(:apply!)
         end
@@ -36,6 +38,7 @@ describe AwsSsmEnv::Loader do
 
       context 'when overwrite is not truthy string' do
         let(:args) { { path: '/foo', overwrite: 'foo' } }
+
         it '@applier is not overwrite method' do
           expect(applier).to eq(:apply)
         end
