@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/sonodar/aws-ssm-env-ruby.svg?branch=master)](https://travis-ci.org/sonodar/aws-ssm-env-ruby)
+
 # aws-ssm-env
 
 AWS EC2 Parameter Storeから取得したパラメータを環境変数として設定します。  
