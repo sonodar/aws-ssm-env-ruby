@@ -1,0 +1,66 @@
+require: rubocop-rspec
+
+AllCops:
+  DisplayCopNames: true
+
+AsciiComments:
+  Enabled: false
+
+Style/FileName:
+  Exclude:
+    - '**/aws-ssm-env*.rb'
+
+Style/SingleLineMethods:
+  Enabled: false
+
+Style/TrivialAccessors:
+  Enabled: false
+
+Style/IfUnlessModifier:
+  Enabled: false
+
+Style/SpaceInsideBrackets:
+  Enabled: false
+
+Style/BlockDelimiters:
+  Enabled: false
+
+Style/TrailingCommaInLiteral:
+  Enabled: false
+
+Style/AlignParameters:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Style/Semicolon:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Style/ConditionalAssignment:
+  EnforcedStyle: assign_inside_condition
+
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - 'spec/**/*.rb'
+
+Metrics/MethodLength:
+  Max: 15
+
+Performance/Casecmp:
+  Enabled: false
+
+RSpec/FilePath:
+  Enabled: false
+
+RSpec/AnyInstance:
+  Enabled: false
+
+RSpec/ExampleLength:
+  Enabled: false
+
+RSpec/MultipleDescribes:
+  Enabled: false
+
+RSpec/InstanceVariable:
+  Enabled: false
