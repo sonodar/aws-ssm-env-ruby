@@ -1,12 +1,19 @@
 language: ruby
 sudo: false
 cache: bundler
+env:
+  global:
+    - AWS_REGION="ap-northeast-1"
+    - secure: "HbOwI2kx9YPy5faj79HH5DB9JDXtDPLXmG3M5UaUeqwpyHj31oTCZTNjd9ONLlXvrV+bpDnFteIFngMlZ6+CskOETfHs0NGbWPuzc3YBz497JVrI7/S1EjKstbSVmRa1dFI7SB+gretjA1Z3yX0JTsoILk0wEqCXk+1p4P9MoXi9BvkyzGdRMktJGv1AS6zhbNCkIx+KHUHBcSShWP1rYY53NDSXZ2P6cQ5QS/PSsNa9DwlcciBwQ/+KlabMkGHvirjcMkiG1POkXdLDi5N+g2QeFe1VUOayXU757Rd+HBIT8IteRJrrJJI+l8ahZvz9y88CvULYi9AIFg6OZ1rLow5gjDIYExr7s1/Qof3OWoH60CpWQhNZGMavadr3l+vMD5Id2fIqubCgs8En/5937mbMwzEfmm5TOTraKmgfjQNhuYt117MZUmfR3eZlc9HUv5NWI3FdWlu2Y8jVp5JOljxZJ8H55H+IfiSe1v96S0lk77iAhBkk812bB0FLc9sYP4KiE/J/dsLAncJaeW+gwXwS41P6YDXw2APiXYDDAPXKuDtNKTFFQOsjTzghyq9xQMtPF3d8F3SMD3kx5wZHQQLnUY9rQonv9I/feoGfiGBlnPMqh9fV94rAtccr7gWD/FQ3GAcZfe6U+fm31i6dDgMwWICyv3o+aZTSsfoL0k0="
+    - secure: "Ywe7HL0IG//O8+6MawrIVcVmnJRNN6wkFp4434jOu1sv5rFbhQqYS4s5ABBUVt7BwU4YL5Ugtw/T+QIGJgPheiTCYdAFQHCZCLCRfSyJRf96RlYqNb8hY2jSKTtuquWNJgSXXG7FXoGLVldKDWVdOVByXeVSXlNUTvB2Pj3JLXsLdDSFbS/goKX8W31HJRE0iiKH4kOw14vHm5jYrMkP572URA0xmbHiWzQ7ypINnnoe48qkyVMd8ZlV2WpB3LpSDLXGnyDxSWJvnPk+BijMDCC15aWH3mysC+iB5WmtQi+fOt6yledUCXR4BVM2sYStYFnUtAQpScbIOtWqSiPkIki2l+seFgWdmvBCyARkXrE2iGWuAil/jdpMGRqeOZqszcqTGScwtVhx/YqDbg9lkPvW2ewJlAK5BKTX27BsU2+AMyoXgV7aRESHsXPLt81fO4rqvDhiNo+mMuunmUjidEvvLEGEqUDAOH2ef2YVi9piuc2Uh3xH1f2KNltzgy3jl156KRO0YCgtkRHmDRnBswPHPWB9CHxnC67W2ZLfm7VjEUGzjq3XJmLlPhuO8uIM9jx2dMH1UY/sEhp4FU82RNv4yuYYDGhjD4TEmsGfbaGNSE/r5r6HZRMwICR4Xz43rHwCW+uaSADNUkM/hzAhf/xdfZzBaBllP2B5yzCuRBk="
 rvm:
   - 2.2
   - 2.3
   - 2.4
-  - 2.5
-  - jruby
+script:
+  - bundle exec rspec
+  - DISABLE_COVERAGE=true bundle exec rspec --tag integration
+  - bundle exec rubocop
 deploy:
   provider: rubygems
   gem: aws-ssm-env
