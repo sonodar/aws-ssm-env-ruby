@@ -1,0 +1,17 @@
+language: ruby
+sudo: false
+cache: bundler
+rvm:
+  - 2.2
+  - 2.3
+  - 2.4
+  - 2.5
+  - jruby
+deploy:
+  provider: rubygems
+  gem: aws-ssm-env
+  api_key:
+    secure: "bj4BAACJ5lhNxisUNTIvdiC9trSGtss/B8ypLH1mkuZ2FRtB8sAUCU4Ze8JpYf9MJZ5iGnnaEvvj7wHAIt3wAtaQr8LdPss4MM79JwHoJ/TGnZRLzgyOukidlIjn8AI8RLqnkjMqEJ5kSvGYi2nS0bGDQH2+rCd8bwAFQxsiqDXfBJPE4vXtiDTUUsA6geWbGGtHq0uWg9k6GBORN1NHI8x3VxVc/Y0iY+eIWKpUoIVcH+kVcd8jcGrsSy4Dme2XqYaW77hQISkBvJxFKfHZQyY/Q7EVOCLtdaJElE7DhFOr0bB8sFroGt4jcFZLCPmPYAu5PsqBnxkY6y/kaZWBACvNpPqIgGRdLCokJrd3ez8iBxF6ooDP6WmPnqBj4gRhCl5eLsJX6Xqdh1B8G9QUna/2JxS6pxeFJik4+ghFHoyxqmz14mKofDvqtnWlfvLtnanJxMdENHy1jiEwSu2ruOB0VSyoE9MeutdE0WpE18vpvbRpb5o/Ny0WXUARixHCZ61bDT7QsgELgDKp72RV0mI2QJUvox0NDNAsPitdVLepgHT3BuP79uKbt8q9PkK5cgexjknCIGzbMmY+XQOxq3I0BVyz2BVjsgGllwn98NEgY4AotPNmN7qy0gNse7JoRiZ035ownuQAwPT8PdMA0eaUGCHChKIL6yzZSLC9nTE="
+  on:
+    repo: sonodar/aws-ssm-env-ruby
+    tags: true
