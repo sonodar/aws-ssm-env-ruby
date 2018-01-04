@@ -1,4 +1,7 @@
-unless ENV['DISABLE_COVERAGE']
+if ENV['CI']
+  require 'coveralls'
+  Coveralls.wear!
+else
   require 'simplecov'
   require 'simplecov-console'
   SimpleCov.start do
@@ -13,6 +16,7 @@ end
 
 require 'aws-ssm-env'
 require 'aws-ssm-env/parameter'
+
 RSpec.configure do |config|
-  config.filter_run_excluding integration: true
+  config.filter_run_excluding(integration: true) unless ENV['CI']
 end
