@@ -56,12 +56,12 @@ describe AwsSsmEnv do
   #
   describe 'Integration test', integration: true do
     PARAMETERS = [
-      { name: '/test/aws-ssm-env/db_password', value: 'db_password', type: :SecureString },
-      { name: '/test/aws-ssm-env/db/username', value: 'db_username', type: :String },
-      { name: '/test/aws-ssm-env/roles', value: 'admin,guest', type: :StringList },
-      { name: 'test.aws-ssm-env.db_password', value: 'db_password', type: :SecureString },
-      { name: 'test.aws-ssm-env.username', value: 'db_username', type: :String },
-      { name: 'test.aws-ssm-env.roles', value: 'admin,guest', type: :StringList },
+      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db_password", value: 'db_password', type: :SecureString },
+      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db/username", value: 'db_username', type: :String },
+      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/roles", value: 'admin,guest', type: :StringList },
+      { name: "test.#{RUBY_VERSION}.aws-ssm-env.db_password", value: 'db_password', type: :SecureString },
+      { name: "test.#{RUBY_VERSION}.aws-ssm-env.username", value: 'db_username', type: :String },
+      { name: "test.#{RUBY_VERSION}.aws-ssm-env.roles", value: 'admin,guest', type: :StringList },
     ].freeze
     ENV_NAMES = %w[db_password username roles].freeze
 
@@ -99,7 +99,7 @@ describe AwsSsmEnv do
     describe 'path fetcher' do
       context 'when recursive is true' do
         it 'set environment variables from EC2 Parameter Store parameters' do
-          described_class.load(path: '/test/aws-ssm-env', recursive: true, logger: logger)
+          described_class.load(path: "/test/#{RUBY_VERSION}/aws-ssm-env", recursive: true, logger: logger)
           expect(ENV['db_password']).to eq('db_password')
           expect(ENV['username']).to eq('db_username')
           expect(ENV['roles']).to eq('admin,guest')
@@ -108,7 +108,7 @@ describe AwsSsmEnv do
 
       context 'when recursive is false' do
         it 'set environment variables from EC2 Parameter Store parameters' do
-          described_class.load(path: '/test/aws-ssm-env', recursive: false, logger: logger)
+          described_class.load(path: "/test/#{RUBY_VERSION}/aws-ssm-env", recursive: false, logger: logger)
           expect(ENV['db_password']).to eq('db_password')
           expect(ENV['username']).to be_nil
           expect(ENV['roles']).to eq('admin,guest')
@@ -118,7 +118,7 @@ describe AwsSsmEnv do
 
     describe 'begins_with fetcher' do
       it 'set environment variables from EC2 Parameter Store parameters' do
-        described_class.load(begins_with: 'test.aws-ssm-env.', naming: :snakecase, delimiter: '.', logger: logger)
+        described_class.load(begins_with: "test.#{RUBY_VERSION}.aws-ssm-env.", naming: :snakecase, delimiter: '.', logger: logger)
         expect(ENV['DB_PASSWORD']).to eq('db_password')
         expect(ENV['USERNAME']).to eq('db_username')
         expect(ENV['ROLES']).to eq('admin,guest')
