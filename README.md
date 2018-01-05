@@ -34,7 +34,7 @@ end
 
 ```ruby
 require 'aws-ssm-env'
-AwsSsmEnv.load!(begins_with: "myapp.ENV['RACK_ENV'].")
+AwsSsmEnv.load!(begins_with: "myapp.#{ENV['RACK_ENV']}.")
 ```
 
 ## Quick Start
@@ -85,6 +85,46 @@ end
 
 詳細はaws-sdkのドキュメントを参照してください。
 
+## Develop
+
+### Unit test
+
+```shell
+bundle exec rspec
+bundle exec rubocop
+```
+
+### Integration test
+
+```shell
+export AWS_ACCESS_KEY_ID=xxxx
+export AWS_SECRET_ACCESS_KEY=xxxx
+export AWS_REGION=xxxx
+bundle exec rspec --tag integration
+```
+
+IAMユーザには以下の認可ポリシーが必要です。
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
+      "Effect": "Allow",
+      "Action": [
+        "ssm:PutParameter",
+        "ssm:DeleteParameters",
+        "ssm:DescribeParameters",
+        "ssm:GetParameters*"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+```
+
+
 ## Usage
 
 `AwsSsmEnv#load`に渡すオプションの説明です。
@@ -123,7 +163,7 @@ SecureStringのパラメータを復号化するかどうかを表すフラグ�
 持ったクラスのインスタンスのいずれか。  
 何も指定されていない場合は`:path`として扱われるが、後述の`begins_with`が指定されていた場合は自動的に`:begins_with`となる。
 
-#### :fetch => :path
+#### `:fetch => :path` or default
 
 `:path`を指定した場合はパラメータ階層をパス指定で取得する`AwsSsmEnv::PathFetcher`が利用される。  
 この場合は後述の`path`引数が必須となる。また、後述の`recursive`引数を利用する。  
@@ -144,7 +184,7 @@ SecureStringのパラメータを復号化するかどうかを表すフラグ�
 }
 ```
 
-#### :fetch => :begins_with
+#### `:fetch => :begins_with`
 
 `:begins_with`を指定した場合はパラメータ名が指定した文字列から開始するパラメータを取得する`AwsSsmEnv::BeginsWithFetcher`が利用される。  
 この場合は後述の`begins_with`引数が必須となる。
@@ -181,21 +221,25 @@ SecureStringのパラメータを復号化するかどうかを表すフラグ�
 指定可能な値は`:basename`, `:snakecase`または`AwsSsmEnv::NamingStrategy`を実装したクラスのインスタンス、`parse_name`メソッドを持ったクラスのインスタンスのいずれか。  
 デフォルトは`:basename`。
 
-#### :naming => :basename or :naming => nil
+#### `:naming => :basename` or default
 
 `naming`を指定しなかった場合、もしくは`:basename`を指定した場合はパラメータ階層の最後の階層を変数名とする`AwsSsmEnv::BasenameNamingStrategy`が利用される。  
 この場合、例えば`/myapp/production/DB_PASSWORD`というパラメータ名であれば`ENV['DB_PASSWORD']`にパラメータ値がインジェクションされる。
 
-#### :naming => :snakecase
+#### `:naming => :snakecase`
 
 `:snakecase`を指定した場合はパラメータ名のスラッシュ区切りをアンダースコア区切りにした結果を大文字に変換して環境変数名とする`AwsSsmEnv::SnakeCaseNamingStrategy`が利用される。  
 この場合、例えば`/myapp/production/DB_PASSWORD`というパラメータ名であれば`ENV['MYAPP_PRODUCTION_DB_PASSWORD']`にパラメータ値がインジェクションされる。  
 後述の`removed_prefix`引数で除外する先頭文字列を指定することができる。  
 また、後述の`delimiter`オプションでアンダースコアに変換する文字を指定できる。  
-以下の例では`/myapp/production/db/password`というパラメータが`ENV['DB_PASSWORD']`にインジェクションされる。
+以下の例では`/myapp/production/db.password`というパラメータが`ENV['DB_PASSWORD']`にインジェクションされる。
 
 ```ruby
-AwsSsmEnv.load(naming: :snakecase, removed_prefix: '/myapp/production')
+AwsSsmEnv.load!(
+  naming: :snakecase,
+  removed_prefix: '/myapp/production',
+  delimiter: /[\/.]/
+)
 ```
 
 #### other
@@ -264,7 +308,7 @@ EC2インスタンスプロファイルとは別にIAMユーザを用意する�
 
 EC2にログインできるのが管理者のみであればファイルで持つのと大差ありません。
 
-`AWS Fargate`であればコンテナ上でコマンドの実行はできないので、シークレット情報が見られることはありません。
+`AWS Fargate`であればコンテナ上でコマンドの実行は困難なため、このリスクは軽減されます。
 
 ## License
 
