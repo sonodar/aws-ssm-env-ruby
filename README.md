@@ -1,9 +1,10 @@
 [![Build Status](https://travis-ci.org/sonodar/aws-ssm-env-ruby.svg?branch=master)](https://travis-ci.org/sonodar/aws-ssm-env-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/sonodar/aws-ssm-env-ruby/badge.svg?branch=master)](https://coveralls.io/github/sonodar/aws-ssm-env-ruby?branch=master)
+[![Gem Version](https://badge.fury.io/rb/aws-ssm-env.svg)](https://badge.fury.io/rb/aws-ssm-env)
 
 # aws-ssm-env
 
-Set parameters acquired from `AWS EC2 Parameter Store` as environment variables.  
+This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables.  
 
 By default, the last hierarchy of the parameter name is
 set as the environment variable name.  
@@ -42,7 +43,7 @@ AwsSsmEnv.load!(begins_with: "myapp.#{ENV['RACK_ENV']}.")
 
 ## Quick Start
 
-It is necessary to register the parameters in `AWS EC2 Parameter Store` in advance.
+First of all, register the parameters in `AWS EC2 Parameter Store`.
 
 ```shell
 # ex) register /myservice/staging/RDS_PASSWORD with SecureString
@@ -51,7 +52,7 @@ aws ssm --region ap-northeast-1 put-parameter \
   --type SecureString --value <secret value>
 ```
 
-Set authentication information of AWS.   
+Then, set authentication information of AWS.   
 For example, you can use environment variables as follows,
 
 ```shell
@@ -60,7 +61,7 @@ export AWS_SECRET_ACCESS_KEY=YOURSECRETKEY
 bundle exec rails start
 ```
 
-Pass `ssm_client_args` as an argument,
+Or, you can pass `ssm_client_args` as the argument for `AwsSsmEnv#load`:
 
 ```ruby
 AwsSsmEnv.load(
@@ -131,7 +132,7 @@ IAM users who run tests need the following authorization policy:
 
 ## Usage
 
-A description of the options passed to `AwsSsmEnv#load`.
+Here are descriptions of the options passed to `AwsSsmEnv#load`.
 
 ### decryption: [Boolean]
 
@@ -153,7 +154,7 @@ If you invoke `AwsSsmEnv#load!`, This flag will automatically be set to `true`.
 
 Specify an instance of `Aws::SSM::Client`.  
 An option to set it if there are already created instances.  
-If there are no instances already created use `ssm_client_args`.
+If there are no instances created, use `ssm_client_args` instead.
 
 ### ssm_client_args: [Hash]
 
@@ -168,8 +169,8 @@ Specify parameter fetch strategy.
 Possible values are `:path`,`:begins_with`
 or an instance of a class that implements `AwsSsmEnv::Fetcher`,
 or an instance of a class with a `each` method.  
-If nothing is specified, it is treated as `:path`,
-but if `begins_with` is specified later,
+If nothing is specified, it is treated as `:path`.  
+But when `begins_with` (which is described later) is specified,
 it will automatically be `:begins_with`.
 
 #### `:fetch => :path` or default
@@ -177,7 +178,7 @@ it will automatically be `:begins_with`.
 When `:path` is specified, `AwsSsmEnv::PathFetcher` which fetches
 parameter hierarchy by path specification is used.  
 In this case, the `path` argument described below is required.
-Also, use the `recursive` argument described later.  
+Also, the `recursive` argument (described later) is used.  
 When acquiring parameters in this way, you need `ssm:GetParametersByPath` authority
 for the specified path.  
 An example of the IAM policy is shown below.
@@ -229,7 +230,7 @@ An example of the IAM policy is shown below.
 #### other
 
 If you specify an instance of a class that implements `AwsSsmEnv::Fetcher` in` fetch`,
-or an instance with a `each` method, use that instance as is.
+or an instance with a `each` method, that instance will be used as is.
 
 ### naming: [Symbol, AwsSsmEnv::NamingStrategy, Object]
 
@@ -254,7 +255,7 @@ the underscore delimiter of the parameter name's slash delimiter and converts
 it to uppercase letters as the environment variable name is used.  
 In this case, for example, if the parameter name is `/myapp/production/DB_PASSWORD`,
 the parameter value is set to `ENV['MYAPP_PRODUCTION_DB_PASSWORD']`.  
-You can specify the first character string to exclude with
+You can specify first part of string to exclude with
 the `removed_prefix` argument described below.
 In addition, you can specify characters to be converted to
 underscores with the `delimiter` option described below.  
@@ -272,13 +273,13 @@ AwsSsmEnv.load!(
 #### other
 
 If you specify an instance of a class that implements `AwsSsmEnv::NamingStrategy` in` fetch`,
-or an instance with a `parse_name` method, use that instance as is.
+or an instance with a `parse_name` method, that instance is used as is.
 
 
 ### path: [String]
 
-It is required if nothing is specified for `fetch` or if `:path` is specified.  
-Specify the path hierarchy for acquiring parameters.  
+Required if nothing is specified for `fetch` or if `:path` is specified.  
+This option specifies the path hierarchy for acquiring parameters from `Parameter Store`.  
 In the example below, the parameter immediately under `/myapp/web/production` is acquired.
 
 ```ruby
@@ -287,8 +288,9 @@ AwsSsmEnv.load(path: '/myapp/web/production')
 
 #### recursive: [Boolean]
 
-It is required if nothing is specified for `fetch` or if `:path` is specified.  
-Acquires all parameters below the specified path hierarchy.  
+Used when nothing is specified for `fetch` or if `:path` is specified.  
+If true is specified, acquires all parameters below the specified path hierarchy.  
+If nothing is specified this parameter, it is treated as `false`(one level).  
 In the following example, all parameters below `/myapp/web/production` are acquired.
 
 ```ruby
@@ -297,9 +299,9 @@ AwsSsmEnv.load(path: '/myapp/web/production', recursive: true)
 
 ### begins_with: [String, Array<String>]
 
-It is required if `:begins_with` is specified in `fetch`.  
-Specify the prefix of the parameter name to be acquired.
-It is also possible to specify more than one in an array (OR condition).    
+Required if `:begins_with` is specified in `fetch`.  
+You can specify the prefix of the parameter name to be acquired by this option.  
+It is also possible to specify more than one in an array (OR condition).  
 In the example below, parameters with names starting with `myapp.web.production` are acquired.
 
 ```ruby
@@ -308,14 +310,15 @@ AwsSsmEnv.load(path: 'myapp.web.production')
 
 ### removed_prefix: [String]
 
-It is used when `:snakecase` is specified in `naming`.  
-Specify the prefix of the parameter name to exclude from the environment variable name.  
-If `:removed_ prefix` is not specified, and `:begins_with` or `:path` was specified, use it.
+Used when `:snakecase` is specified in `naming`.  
+By this option, you can specify the prefix of the parameter name to exclude
+from the environment variable name.  
+If `:removed_ prefix` is not specified, and `:begins_with` or `:path` is specified, that will be used.
 
 ### delimiter: [String, Regexp]
 
-It is used when `:snakecase` is specified in `naming`.  
-Specify a character string or regular expression to be converted to an underscore.  
+Used when `:snakecase` is specified in `naming`.  
+By this option, you can specify a string or a regular expression to be converted to an underscore.  
 The default is a slash (`/`).
 
 ### fetch_size: [Integer]

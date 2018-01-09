@@ -1,5 +1,6 @@
 [![Build Status](https://travis-ci.org/sonodar/aws-ssm-env-ruby.svg?branch=master)](https://travis-ci.org/sonodar/aws-ssm-env-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/sonodar/aws-ssm-env-ruby/badge.svg?branch=master)](https://coveralls.io/github/sonodar/aws-ssm-env-ruby?branch=master)
+[![Gem Version](https://badge.fury.io/rb/aws-ssm-env.svg)](https://badge.fury.io/rb/aws-ssm-env)
 
 # aws-ssm-env
 
