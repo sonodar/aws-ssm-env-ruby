@@ -288,7 +288,7 @@ AwsSsmEnv.load(path: '/myapp/web/production')
 
 #### recursive: [Boolean]
 
-Used when nothing is specified for `fetch` or if `:path` is specified.  
+Used when no parameter is specified for `fetch` option or when `:path` is specified.  
 If true is specified, acquires all parameters below the specified path hierarchy.  
 If nothing is specified this parameter, it is treated as `false`(one level).  
 In the following example, all parameters below `/myapp/web/production` are acquired.
