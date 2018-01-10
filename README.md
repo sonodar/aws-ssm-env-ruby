@@ -1,14 +1,18 @@
 [![Build Status](https://travis-ci.org/sonodar/aws-ssm-env-ruby.svg?branch=master)](https://travis-ci.org/sonodar/aws-ssm-env-ruby)
 [![Coverage Status](https://coveralls.io/repos/github/sonodar/aws-ssm-env-ruby/badge.svg?branch=master)](https://coveralls.io/github/sonodar/aws-ssm-env-ruby?branch=master)
+[![Gem Version](https://badge.fury.io/rb/aws-ssm-env.svg)](https://badge.fury.io/rb/aws-ssm-env)
 
 # aws-ssm-env
 
-AWS EC2 Parameter Storeから取得したパラメータを環境変数として設定します。  
+This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables.  
 
-デフォルトでは、パラメータ名の最後の階層が環境変数名として設定されます。  
+By default, the last hierarchy of the parameter name is
+set as the environment variable name.  
 
-例えば、`/staging/secure/DB_PASSWORD`というパラメータ名であれば、`ENV['DB_PASSWORD']`にパラメータ値が設定されます。  
-この環境変数のネーミングはオプションでカスタマイズ可能です。(後述)
+For example, if the parameter name is `/staging/secure/DB_PASSWORD`,
+the parameter value is set to `ENV['DB_PASSWORD']`.  
+The naming of environment variables is optional and can be customized.
+(described later)
 
 ## Installation
 
@@ -39,16 +43,17 @@ AwsSsmEnv.load!(begins_with: "myapp.#{ENV['RACK_ENV']}.")
 
 ## Quick Start
 
-事前にAWS EC2 Parameter Storeにパラメータを登録しておく必要があります。
+First of all, register the parameters in `AWS EC2 Parameter Store`.
 
 ```shell
-# 例) /myservice/staging/RDS_PASSWORDをSecureStringで登録
+# ex) register /myservice/staging/RDS_PASSWORD with SecureString
 aws ssm --region ap-northeast-1 put-parameter \
   --name /myservice/staging/RDS_PASSWORD \
   --type SecureString --value <secret value>
 ```
 
-AWSの認証情報を設定します。例えば、以下のように環境変数を利用したり、
+Then, set authentication information of AWS.   
+For example, you can use environment variables as follows,
 
 ```shell
 export AWS_ACCESS_KEY_ID=YOURACCESSKEYID
@@ -56,7 +61,7 @@ export AWS_SECRET_ACCESS_KEY=YOURSECRETKEY
 bundle exec rails start
 ```
 
-引数で`ssm_client_args`を渡したり、
+Or, you can pass `ssm_client_args` as the argument for `AwsSsmEnv#load`:
 
 ```ruby
 AwsSsmEnv.load(
@@ -69,7 +74,7 @@ AwsSsmEnv.load(
 )
 ```
 
-`Aws.config`を利用することもできます。
+You can also use `Aws.config`.
 
 ```ruby
 
@@ -83,7 +88,7 @@ if defined?(AwsSsmEnv)
 end
 ```
 
-詳細はaws-sdkのドキュメントを参照してください。
+For details, refer to the document of aws-sdk.
 
 ## Develop
 
@@ -103,7 +108,7 @@ export AWS_REGION=xxxx
 bundle exec rspec --tag integration
 ```
 
-IAMユーザには以下の認可ポリシーが必要です。
+IAM users who run tests need the following authorization policy:
 
 ```json
 {
@@ -127,48 +132,56 @@ IAMユーザには以下の認可ポリシーが必要です。
 
 ## Usage
 
-`AwsSsmEnv#load`に渡すオプションの説明です。
+Here are descriptions of the options passed to `AwsSsmEnv#load`.
 
 ### decryption: [Boolean]
 
-SecureStringのパラメータを復号化するかどうかを表すフラグ。  
-`true`を指定した場合は取得したSecureStringパラメータの値は復号化されている。  
-`false`の場合は暗号化されたまた環境変数値として設定される。  
-なお、このためのgemなのでデフォルトは`true`(復号化する)。
+Flag indicating whether to decrypt SecureString parameters.  
+If `true` is specified, the value of the acquired SecureString parameter is decrypted.  
+In case of `false` it is set as encrypted and environment variable value.  
+Since it is a gem for this, the default is `true` (decrypt).
 
 ### overwrite: [Boolean]
 
-すでに設定されている環境変数を上書きするかどうかを指定する。  
-`true`を指定した場合、環境変数が設定されていても取得したパラメータ値で上書きする。  
-`false`を指定した場合はすでに設定されている環境変数を上書きしない。  
-デフォルトは`false`(上書きしない)。  
-なお、`AwsSsmEnv#load!`を実行した場合、このフラグは自動的に`true`になる。
+Specify whether to overwrite an already set environment variable.  
+If `true` is specified, even if the environment variable is set,
+it overwrites it with the acquired parameter value.  
+If `false` is specified, do not overwrite already set environment variables.  
+The default is `false` (do not overwrite).  
+If you invoke `AwsSsmEnv#load!`, This flag will automatically be set to `true`.
 
 ### client: [Aws::SSM::Client]
 
-`Aws::SSM::Client`のインスタンスを指定する。  
-すでに生成済みのインスタンスがある場合にそれを設定するためのオプション。  
-生成済みのインスタンスがない場合は`ssm_client_args`を利用する。
+Specify an instance of `Aws::SSM::Client`.  
+An option to set it if there are already created instances.  
+If there are no instances created, use `ssm_client_args` instead.
 
 ### ssm_client_args: [Hash]
 
-`Aws::SSM::Client`のコンストラクタに渡すハッシュを指定する。  
-指定しなかった場合は引数なしで`Aws::SSM::Client.new`が呼ばれる。  
-環境変数やEC2インスタンスプロファイルによる認証情報を利用する場合は不要。
+Specify a hash to pass to the constructor of `Aws::SSM::Client`.  
+If not specified, `Aws::SSM::Client#new` is called with an empty argument.  
+It is unnecessary when using environment variable
+or authentication information by `EC2 InstanceProfile`.
 
 ### fetch: [Symbol, AwsSsmEnv::Fetcher, Object]
 
-パラメータ取得方法を指定する。  
-指定可能な値は`:path`, `:begins_with`または`AwsSsmEnv::Fetcher`を実装したクラスのインスタンス、`each`メソッドを
-持ったクラスのインスタンスのいずれか。  
-何も指定されていない場合は`:path`として扱われるが、後述の`begins_with`が指定されていた場合は自動的に`:begins_with`となる。
+Specify parameter fetch strategy.  
+Possible values are `:path`,`:begins_with`
+or an instance of a class that implements `AwsSsmEnv::Fetcher`,
+or an instance of a class with a `each` method.  
+If nothing is specified, it is treated as `:path`.  
+But when `begins_with` (which is described later) is specified,
+it will automatically be `:begins_with`.
 
 #### `:fetch => :path` or default
 
-`:path`を指定した場合はパラメータ階層をパス指定で取得する`AwsSsmEnv::PathFetcher`が利用される。  
-この場合は後述の`path`引数が必須となる。また、後述の`recursive`引数を利用する。  
-この方法でパラメータを取得する場合は指定するパスに対して`ssm:GetParametersByPath`の権限が必要。
-以下、IAMポリシーの例を示す。
+When `:path` is specified, `AwsSsmEnv::PathFetcher` which fetches
+parameter hierarchy by path specification is used.  
+In this case, the `path` argument described below is required.
+Also, the `recursive` argument (described later) is used.  
+When acquiring parameters in this way, you need `ssm:GetParametersByPath` authority
+for the specified path.  
+An example of the IAM policy is shown below.
 
 ```json
 {
@@ -186,10 +199,13 @@ SecureStringのパラメータを復号化するかどうかを表すフラグ�
 
 #### `:fetch => :begins_with`
 
-`:begins_with`を指定した場合はパラメータ名が指定した文字列から開始するパラメータを取得する`AwsSsmEnv::BeginsWithFetcher`が利用される。  
-この場合は後述の`begins_with`引数が必須となる。
-この方法でパラメータを取得する場合は指定するパスに対して`ssm:DescribeParameters`および`ssm:GetParameters`の権限が必要。
-以下、IAMポリシーの例を示す。
+If `:begins_with` is specified, `AwsSsmEnv::BeginsWithFetcher` is used to fetch
+parameters starting from the character string specified by the parameter name.  
+In this case, the `begins_with` argument described below is required.  
+When acquiring parameters in this way,
+you need the authority of `ssm:DescribeParameters` and `ssm:GetParameters`
+for the specified path.  
+An example of the IAM policy is shown below.
 
 ```json
 {
@@ -213,26 +229,38 @@ SecureStringのパラメータを復号化するかどうかを表すフラグ�
 
 #### other
 
-`fetch`に`AwsSsmEnv::Fetcher`を実装したクラスのインスタンス、もしくは`each`メソッドを持つインスタンスを指定した場合はそのインスタンスをそのまま利用する。
+If you specify an instance of a class that implements `AwsSsmEnv::Fetcher` in` fetch`,
+or an instance with a `each` method, that instance will be used as is.
 
 ### naming: [Symbol, AwsSsmEnv::NamingStrategy, Object]
 
-環境変数名を導出方法を指定する。  
-指定可能な値は`:basename`, `:snakecase`または`AwsSsmEnv::NamingStrategy`を実装したクラスのインスタンス、`parse_name`メソッドを持ったクラスのインスタンスのいずれか。  
-デフォルトは`:basename`。
+Specify the naming strategy for the environment variable name.  
+Possible values are `:basename`,`:snakecase`
+or an instance of a class that implements `AwsSsmEnv::NamingStrategy`,
+or an instance of a class with a `parse_name` method.  
+If nothing is specified, it is treated as `:basename`.
 
 #### `:naming => :basename` or default
 
-`naming`を指定しなかった場合、もしくは`:basename`を指定した場合はパラメータ階層の最後の階層を変数名とする`AwsSsmEnv::BasenameNamingStrategy`が利用される。  
-この場合、例えば`/myapp/production/DB_PASSWORD`というパラメータ名であれば`ENV['DB_PASSWORD']`にパラメータ値がインジェクションされる。
+If `naming` is not specified or `:basename` is specified,
+`AwsSsmEnv::BasenameNamingStrategy` whose variable name is
+the last hierarchy of the parameter hierarchy is used.  
+In this case, for example, if the parameter name is `/myapp/production/DB_PASSWORD`,
+the parameter value is set to `ENV['DB_PASSWORD']`. 
 
 #### `:naming => :snakecase`
 
-`:snakecase`を指定した場合はパラメータ名のスラッシュ区切りをアンダースコア区切りにした結果を大文字に変換して環境変数名とする`AwsSsmEnv::SnakeCaseNamingStrategy`が利用される。  
-この場合、例えば`/myapp/production/DB_PASSWORD`というパラメータ名であれば`ENV['MYAPP_PRODUCTION_DB_PASSWORD']`にパラメータ値がインジェクションされる。  
-後述の`removed_prefix`引数で除外する先頭文字列を指定することができる。  
-また、後述の`delimiter`オプションでアンダースコアに変換する文字を指定できる。  
-以下の例では`/myapp/production/db.password`というパラメータが`ENV['DB_PASSWORD']`にインジェクションされる。
+When `:snakecase` is specified, `AwsSsmEnv::SnakeCaseNamingStrategy` which uses
+the underscore delimiter of the parameter name's slash delimiter and converts
+it to uppercase letters as the environment variable name is used.  
+In this case, for example, if the parameter name is `/myapp/production/DB_PASSWORD`,
+the parameter value is set to `ENV['MYAPP_PRODUCTION_DB_PASSWORD']`.  
+You can specify first part of string to exclude with
+the `removed_prefix` argument described below.
+In addition, you can specify characters to be converted to
+underscores with the `delimiter` option described below.  
+In the following example, the parameter `/myapp/production/db.password` is
+set to `ENV['DB_PASSWORD']`.
 
 ```ruby
 AwsSsmEnv.load!(
@@ -244,14 +272,15 @@ AwsSsmEnv.load!(
 
 #### other
 
-`AwsSsmEnv::NamingStrategy`を実装したクラスのインスタンス、もしくは`parse_name`メソッドを持つ  
-インスタンスを指定した場合はそのインスタンスをそのまま利用する。
+If you specify an instance of a class that implements `AwsSsmEnv::NamingStrategy` in` fetch`,
+or an instance with a `parse_name` method, that instance is used as is.
+
 
 ### path: [String]
 
-`fetch`に何も指定していない場合、もしくは`:path`を指定した場合は必須となる。  
-パラメータを取得するパス階層を指定する。  
-下の例では`/myapp/web/production`直下のパラメータが取得される。
+Required if nothing is specified for `fetch` or if `:path` is specified.  
+This option specifies the path hierarchy for acquiring parameters from `Parameter Store`.  
+In the example below, the parameter immediately under `/myapp/web/production` is acquired.
 
 ```ruby
 AwsSsmEnv.load(path: '/myapp/web/production')
@@ -259,9 +288,10 @@ AwsSsmEnv.load(path: '/myapp/web/production')
 
 #### recursive: [Boolean]
 
-`fetch`に何も指定していない場合、もしくは`:path`を指定した場合に利用する。  
-指定したパス階層以下のパラメータをすべて取得する。  
-下の例では`/myapp/web/production`以下すべてのパラメータが取得される。
+Used when no parameter is specified for `fetch` option or when `:path` is specified.  
+If true is specified, acquires all parameters below the specified path hierarchy.  
+If nothing is specified this parameter, it is treated as `false`(one level).  
+In the following example, all parameters below `/myapp/web/production` are acquired.
 
 ```ruby
 AwsSsmEnv.load(path: '/myapp/web/production', recursive: true)
@@ -269,9 +299,10 @@ AwsSsmEnv.load(path: '/myapp/web/production', recursive: true)
 
 ### begins_with: [String, Array<String>]
 
-`fetch`に`:begins_with`を指定した場合は必須となる。  
-取得するパラメータ名のプレフィクスを指定する。配列で複数指定することも可能(OR条件となる)。  
-下の例では`myapp.web.production`で始まる名前のパラメータが取得される。
+Required if `:begins_with` is specified in `fetch`.  
+You can specify the prefix of the parameter name to be acquired by this option.  
+It is also possible to specify more than one in an array (OR condition).  
+In the example below, parameters with names starting with `myapp.web.production` are acquired.
 
 ```ruby
 AwsSsmEnv.load(path: 'myapp.web.production')
@@ -279,36 +310,39 @@ AwsSsmEnv.load(path: 'myapp.web.production')
 
 ### removed_prefix: [String]
 
-`naming`に`:snakecase`を指定した場合に利用される。  
-環境変数名から除外するパラメータ名のプレフィクスを指定する。  
-`:removed_prefix`が指定されておらず、`:begins_with`もしくは`:path`が指定されていた場合はそれを利用する。
+Used when `:snakecase` is specified in `naming`.  
+By this option, you can specify the prefix of the parameter name to exclude
+from the environment variable name.  
+If `:removed_ prefix` is not specified, and `:begins_with` or `:path` is specified, that will be used.
 
 ### delimiter: [String, Regexp]
 
-`naming`に`:snakecase`を指定した場合に利用される。  
-アンダースコアに変換する文字列もしくは正規表現を指定する。  
-デフォルトはスラッシュ(`/`)。
+Used when `:snakecase` is specified in `naming`.  
+By this option, you can specify a string or a regular expression to be converted to an underscore.  
+The default is a slash (`/`).
 
 ### fetch_size: [Integer]
 
-一度のAWS API実行で取得するパラメータ数を指定する。 `:path`指定の場合は最大値は`10`でデフォルトも`10`。  
-`:begins_with`指定の場合は最大値は`50`でデフォルトも`50`である。通常このパラメータを指定することはない。
-
-
-## Motivation
-
-RailsアプリケーションをECSで起動する場合、環境変数を渡すのが面倒だったので作りました。  
-
+Specify the number of parameters to be acquired with one execution of AWS API.  
+If `:path` is specified, the maximum value is `10` and the default is `10`.  
+If `:begins_with` is specified, the maximum value is `50` and the default is `50`.  
+Usually this parameter is never specified.
+  
 ## Security
 
-シークレット情報を取得するための権限を付与しなければならないため、セキュリティ運用には十分な注意が必要です。
+Because you must grant authority to acquire secret information,
+careful attention is required for security operation.
 
-EC2インスタンスプロファイルが設定されていた場合、そのEC2上であればどのアカウントでもパラメータが見えるようになるため、  
-EC2インスタンスプロファイルとは別にIAMユーザを用意するなどセキュリティレベルを上げる工夫が必要です。  
 
-EC2にログインできるのが管理者のみであればファイルで持つのと大差ありません。
+When the `EC2 InstanceProfile` is set, the parameters can be seen by any account on EC2,
+It is necessary to improve the security level by preparing an IAM User separately
+from the `EC2 InstanceProfile`.
 
-`AWS Fargate`であればコンテナ上でコマンドの実行は困難なため、このリスクは軽減されます。
+If it is only the administrator that you can log in to EC2, 
+it is not much different from having it in a file.
+
+Since `AWS Fargate` makes it difficult to execute commands on containers,
+this risk is mitigated.
 
 ## License
 
