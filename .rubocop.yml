@@ -2,6 +2,9 @@ require: rubocop-rspec
 
 AllCops:
   DisplayCopNames: true
+  Exclude:
+    - vendor/**/*
+    - aws-ssm-env.gemspec
 
 AsciiComments:
   Enabled: false
