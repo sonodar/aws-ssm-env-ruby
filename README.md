@@ -16,6 +16,8 @@ The naming of environment variables is optional and can be customized.
 
 ## Installation
 
+This gem has been tested with ruby version 2.2 to 2.5.
+
 ```
 gem install aws-ssm-env
 ```
@@ -327,7 +329,7 @@ Specify the number of parameters to be acquired with one execution of AWS API.
 If `:path` is specified, the maximum value is `10` and the default is `10`.  
 If `:begins_with` is specified, the maximum value is `50` and the default is `50`.  
 Usually this parameter is never specified.
-  
+
 ## Security
 
 Because you must grant authority to acquire secret information,
