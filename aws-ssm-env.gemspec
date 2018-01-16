@@ -18,7 +18,7 @@ Gem::Specification.new do |spec|
   spec.required_ruby_version = '>= 2.2'
   spec.metadata = {
     'source_code_uri' => 'https://github.com/sonodar/aws-ssm-env-ruby',
-    'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/aws-ssm-env-ruby/CHANGELOG.md'
+    'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/CHANGELOG.md'
   }
 
   spec.add_dependency 'aws-sdk-ssm', '~>1'
