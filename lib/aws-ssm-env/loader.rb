@@ -1,5 +1,6 @@
 require 'aws-ssm-env/fetchers/factory'
 require 'aws-ssm-env/naming_strategies/factory'
+require 'aws-ssm-env/applyers/factory'
 
 module AwsSsmEnv
   # このgemのエントリポイントとなるクラス。メイン処理を行う。
@@ -19,6 +20,7 @@ module AwsSsmEnv
         @logger.debug("#{self.class.name} overwrite: #{@overwrite}")
         @logger.debug("#{self.class.name} fetcher: #{@fetcher}")
         @logger.debug("#{self.class.name} naming_strategy: #{@naming_strategy}")
+        @logger.debug("#{self.class.name} applyer: #{@applyer}")
       end
     end
 
@@ -26,7 +28,7 @@ module AwsSsmEnv
       @fetcher.each do |parameter|
         var_name = @naming_strategy.parse_name(parameter)
         @logger.debug("#{self.class.name} #{parameter.name} parameter value into ENV['#{var_name}']") if @logger
-        send(@applier, var_name, parameter.value)
+        @applyer.send(@apply_method, var_name, parameter.value)
       end
     end
 
@@ -36,11 +38,12 @@ module AwsSsmEnv
       @logger = options[:logger]
       @fetcher = AwsSsmEnv::FetcherFactory.create_fetcher(options)
       @naming_strategy = AwsSsmEnv::NamingStrategyFactory.create_naming_strategy(options)
+      @applyer = AwsSsmEnv::ParameterSetter.new(options)
       @overwrite = overwrite?(options)
       if @overwrite
-        @applier = :apply!
+        @apply_method = :apply!
       else
-        @applier = :apply
+        @apply_method = :apply
       end
     end
 
@@ -53,15 +56,5 @@ module AwsSsmEnv
       end
     end
 
-    def apply(name, value)
-      if ENV[name]
-        return
-      end
-      apply!(name, value)
-    end
-
-    def apply!(name, value)
-      ENV[name] = value
-    end
   end
 end

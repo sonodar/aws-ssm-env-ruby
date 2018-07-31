@@ -9,38 +9,39 @@ describe AwsSsmEnv::Loader do
     it 'has fetcher and naming_strategy' do
       expect(loader.instance_variable_get(:@fetcher)).to be_a(AwsSsmEnv::PathFetcher)
       expect(loader.instance_variable_get(:@naming_strategy)).to be_a(AwsSsmEnv::BasenameNamingStrategy)
+      expect(loader.instance_variable_get(:@applyer)).to be_a(AwsSsmEnv::EnvironmentApplyer)
     end
 
     describe 'overwrite option' do
-      let(:applier) { loader.instance_variable_get(:@applier) }
+      let(:apply_method) { loader.instance_variable_get(:@apply_method) }
 
       context 'when overwrite was not set' do
-        it '@applier is not overwrite method' do
-          expect(applier).to eq(:apply)
+        it '@apply_method is not overwrite method' do
+          expect(apply_method).to eq(:apply)
         end
       end
 
       context 'when overwrite is nil' do
         let(:args) { { path: '/foo', overwrite: nil } }
 
-        it '@applier is not overwrite method' do
-          expect(applier).to eq(:apply)
+        it '@apply_method is not overwrite method' do
+          expect(apply_method).to eq(:apply)
         end
       end
 
       context 'when overwrite is truthy string' do
         let(:args) { { path: '/foo', overwrite: 'truE' } }
 
-        it '@applier is overwrite method' do
-          expect(applier).to eq(:apply!)
+        it '@apply_method is overwrite method' do
+          expect(apply_method).to eq(:apply!)
         end
       end
 
       context 'when overwrite is not truthy string' do
         let(:args) { { path: '/foo', overwrite: 'foo' } }
 
-        it '@applier is not overwrite method' do
-          expect(applier).to eq(:apply)
+        it '@apply_method is not overwrite method' do
+          expect(apply_method).to eq(:apply)
         end
       end
     end

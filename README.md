@@ -10,8 +10,8 @@ By default, the last hierarchy of the parameter name is
 set as the environment variable name.  
 
 For example, if the parameter name is `/staging/secure/DB_PASSWORD`,
-the parameter value is set to `ENV['DB_PASSWORD']`.  
-The naming of environment variables is optional and can be customized.
+the parameter value is set to `ENV['DB_PASSWORD']` or Settings.DB_PASSWORD.  
+The naming of variables is optional and can be customized.
 (described later)
 
 ## Installation
@@ -32,7 +32,7 @@ gem 'aws-ssm-env', group: :aws
 ```ruby
 # config/application.rb
 if defined?(AwsSsmEnv)
-  AwsSsmEnv.load(path: "/myapp/#{ENV['RAILS_ENV']}", recursive: true)
+  AwsSsmEnv.load(path: "/myapp/#{ENV['RAILS_ENV']}", recursive: true, scope: Settings)
 end
 ```
 
