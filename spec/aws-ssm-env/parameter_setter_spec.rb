@@ -24,6 +24,7 @@ describe AwsSsmEnv::ParameterSetter do
 
     context 'in other cases' do
       let(:args) { { scope: 'foo' } }
+
       it 'raise error' do
         expect { parameter_setter }.to raise_error(ArgumentError)
       end
@@ -32,8 +33,7 @@ describe AwsSsmEnv::ParameterSetter do
 
   describe '#save' do
     context 'when overwrite is false' do
-
-      it 'should not overwrite existing parameters' do
+      it 'does not existing parameters' do
         ENV['foo'] = nil
         ENV['fizz'] = 'fizz'
 
@@ -42,13 +42,13 @@ describe AwsSsmEnv::ParameterSetter do
 
         expect(ENV['foo']).to eq('bar')
         expect(ENV['fizz']).to eq('fizz')
-
       end
     end
 
     context 'when overwrite is true' do
       let(:args) { { overwrite: 'TrUe' } }
-      it 'should overwrite existing parameters' do
+
+      it 'overwrites existing parameters' do
         ENV['foo'] = nil
         ENV['fizz'] = 'fizz'
 
@@ -57,10 +57,7 @@ describe AwsSsmEnv::ParameterSetter do
 
         expect(ENV['foo']).to eq('bar')
         expect(ENV['fizz']).to eq('buzz')
-
       end
     end
-
   end
-
 end

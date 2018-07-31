@@ -1,6 +1,8 @@
 module AwsSsmEnv
+  # @author Dominic O'Connor
+  # @since 0.1.2
   class ParameterSetter
-    def initialize(**args); 
+    def initialize(**args)
       @overwrite = overwrite?(args)
       @scope = scope?(args)
     end
@@ -33,12 +35,11 @@ module AwsSsmEnv
         ENV
       else
         unless scope_type.is_a?(OpenStruct)
-          raise ArgumentError, 'Possible values for :scope are either :environment or an "OpenStruct" implementation class.'
+          raise ArgumentError, 'Possible values for :scope are either :environment ' \
+                + 'or an "OpenStruct" implementation class.'
         end
         scope_type
       end
     end
-
   end
-
 end

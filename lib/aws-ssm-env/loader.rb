@@ -39,6 +39,5 @@ module AwsSsmEnv
       @naming_strategy = AwsSsmEnv::NamingStrategyFactory.create_naming_strategy(options)
       @parameter_setter = AwsSsmEnv::ParameterSetter.new(options)
     end
-
   end
 end
