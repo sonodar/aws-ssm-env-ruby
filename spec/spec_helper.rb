@@ -19,13 +19,4 @@ require 'aws-ssm-env/parameter'
 
 RSpec.configure do |config|
   config.filter_run_excluding(integration: true) unless ENV['CI']
-
-  config.before(:all) do
-    class Settings < OpenStruct
-    end
-  end
-
-  config.after(:all) do
-    Object.send(:remove_const, :Settings)
-  end
 end

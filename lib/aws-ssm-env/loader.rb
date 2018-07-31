@@ -1,6 +1,6 @@
 require 'aws-ssm-env/fetchers/factory'
 require 'aws-ssm-env/naming_strategies/factory'
-require 'aws-ssm-env/applyers/factory'
+require 'aws-ssm-env/parameter_setter'
 
 module AwsSsmEnv
   # このgemのエントリポイントとなるクラス。メイン処理を行う。
@@ -17,10 +17,9 @@ module AwsSsmEnv
     def initialize(**args)
       parse_options(args)
       if @logger
-        @logger.debug("#{self.class.name} overwrite: #{@overwrite}")
         @logger.debug("#{self.class.name} fetcher: #{@fetcher}")
         @logger.debug("#{self.class.name} naming_strategy: #{@naming_strategy}")
-        @logger.debug("#{self.class.name} applyer: #{@applyer}")
+        @logger.debug("#{self.class.name} parameter_setter: #{@parameter_setter}")
       end
     end
 
@@ -28,7 +27,7 @@ module AwsSsmEnv
       @fetcher.each do |parameter|
         var_name = @naming_strategy.parse_name(parameter)
         @logger.debug("#{self.class.name} #{parameter.name} parameter value into ENV['#{var_name}']") if @logger
-        @applyer.send(@apply_method, var_name, parameter.value)
+        @parameter_setter.save(var_name, parameter.value)
       end
     end
 
@@ -38,22 +37,7 @@ module AwsSsmEnv
       @logger = options[:logger]
       @fetcher = AwsSsmEnv::FetcherFactory.create_fetcher(options)
       @naming_strategy = AwsSsmEnv::NamingStrategyFactory.create_naming_strategy(options)
-      @applyer = AwsSsmEnv::ParameterSetter.new(options)
-      @overwrite = overwrite?(options)
-      if @overwrite
-        @apply_method = :apply!
-      else
-        @apply_method = :apply
-      end
-    end
-
-    # overwriteフラグが指定されているかどうかを返す。
-    def overwrite?(overwrite: nil, **)
-      if overwrite.nil?
-        false
-      else
-        overwrite.to_s.downcase == 'true'
-      end
+      @parameter_setter = AwsSsmEnv::ParameterSetter.new(options)
     end
 
   end
