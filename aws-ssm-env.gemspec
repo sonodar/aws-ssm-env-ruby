@@ -4,7 +4,7 @@ Gem::Specification.new do |spec|
 
   spec.name          = 'aws-ssm-env'
   spec.version       = AwsSsmEnv::VERSION
-  spec.summary       = spec.description = 'Set parameters acquired from AWS EC2 Parameter Store as environment variables.'
+  spec.summary       = spec.description = 'Set parameters acquired from AWS EC2 Parameter Store as environment variables or Rails Settings.'
 
   spec.homepage      = 'https://github.com/sonodar/aws-ssm-env-ruby'
   spec.authors       = [ 'Ryohei Sonoda' ]
