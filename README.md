@@ -4,7 +4,7 @@
 
 # aws-ssm-env
 
-This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables.  
+This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables or another scope.  
 
 By default, the last hierarchy of the parameter name is
 set as the environment variable name.  
