@@ -1,7 +1,7 @@
 require 'aws-ssm-env/fetchers/factory'
 require 'aws-ssm-env/naming_strategies/factory'
 require 'aws-ssm-env/parameter_setter'
-\
+
 module AwsSsmEnv
   # このgemのエントリポイントとなるクラス。メイン処理を行う。
   # AWS EC2 Parameters Storeからパラメータを取得してENVに書き込む。
