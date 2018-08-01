@@ -4,14 +4,14 @@
 
 # aws-ssm-env
 
-This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables.  
+This tool sets parameters acquired from `AWS EC2 Parameter Store` as environment variables or another scope.  
 
 By default, the last hierarchy of the parameter name is
 set as the environment variable name.  
 
 For example, if the parameter name is `/staging/secure/DB_PASSWORD`,
-the parameter value is set to `ENV['DB_PASSWORD']`.  
-The naming of environment variables is optional and can be customized.
+the parameter value is set to `ENV['DB_PASSWORD']` or Settings.DB_PASSWORD.  
+The naming of variables is optional and can be customized.
 (described later)
 
 ## Installation
