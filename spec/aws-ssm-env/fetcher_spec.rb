@@ -92,15 +92,19 @@ describe AwsSsmEnv::Fetcher do
       mock_class.new(responses)
     }
 
+    def call_count
+      called = 0
+      fetcher.each do |_|
+        called += 1
+      end
+      called
+    end
+
     context 'when fetch returns empty parameters at first' do
       let(:responses) { [AwsSsmEnv::FetchResult::EMPTY] }
 
       it 'consumer is not called' do
-        called = false
-        fetcher.each do |_|
-          called = true
-        end
-        expect(called).to be_falsey
+        expect(call_count).to eq(0)
       end
     end
 
@@ -111,11 +115,7 @@ describe AwsSsmEnv::Fetcher do
       }
 
       it 'consumer is called twice' do
-        called = 0
-        fetcher.each do |_|
-          called += 1
-        end
-        expect(called).to eq(2)
+        expect(call_count).to eq(2)
       end
     end
 
@@ -123,11 +123,7 @@ describe AwsSsmEnv::Fetcher do
       let(:responses) { [AwsSsmEnv::FetchResult.new(parameters, nil)] }
 
       it 'consumer is called twice' do
-        called = 0
-        fetcher.each do |_|
-          called += 1
-        end
-        expect(called).to eq(2)
+        expect(call_count).to eq(2)
       end
     end
 
@@ -138,11 +134,7 @@ describe AwsSsmEnv::Fetcher do
       }
 
       it 'consumer is called four times' do
-        called = 0
-        fetcher.each do |_|
-          called += 1
-        end
-        expect(called).to eq(4)
+        expect(call_count).to eq(4)
       end
     end
   end
