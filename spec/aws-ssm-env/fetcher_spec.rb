@@ -86,14 +86,14 @@ describe AwsSsmEnv::Fetcher do
     let(:parameters) { [ Parameter.new('foo', 'foo'), Parameter.new('bar', 'bar') ] }
     let(:fetcher) {
       mock_class = Class.new(described_class) do
-        def initialize(response); @response = response; end
-        protected def fetch(_); @response; end
+        def initialize(responses); @responses = responses; end
+        protected def fetch(_); @responses.shift; end
       end
-      mock_class.new(dummy_response)
+      mock_class.new(responses)
     }
 
     context 'when fetch returns empty parameters at first' do
-      let(:dummy_response) { AwsSsmEnv::FetchResult::EMPTY }
+      let(:responses) { [AwsSsmEnv::FetchResult::EMPTY] }
 
       it 'consumer is not called' do
         called = false
@@ -104,8 +104,23 @@ describe AwsSsmEnv::Fetcher do
       end
     end
 
+    context 'when fetch returns empty params and next_token at first, fetch returns two parameters and empty next_token at second' do
+      let(:responses) {
+        [ AwsSsmEnv::FetchResult.new([], 'next_token'),
+          AwsSsmEnv::FetchResult.new(parameters, nil)]
+      }
+
+      it 'consumer is called twice' do
+        called = 0
+        fetcher.each do |_|
+          called += 1
+        end
+        expect(called).to eq(2)
+      end
+    end
+
     context 'when fetch returns two parameters at first and empty next_token' do
-      let(:dummy_response) { AwsSsmEnv::FetchResult.new(parameters, nil) }
+      let(:responses) { [AwsSsmEnv::FetchResult.new(parameters, nil)] }
 
       it 'consumer is called twice' do
         called = 0
@@ -117,19 +132,9 @@ describe AwsSsmEnv::Fetcher do
     end
 
     context 'when fetch returns two parameters and next_token at first, fetch returns two parameters and empty next_token at second' do
-      let(:fetcher) {
-        mock_class = Class.new(described_class) do
-          def initialize(parameters); @parameters = parameters; @count = 0; end
-          protected def fetch(_)
-            if @count == 0
-              @count = 1
-              AwsSsmEnv::FetchResult.new(@parameters, 'next_token')
-            else
-              AwsSsmEnv::FetchResult.new(@parameters, nil)
-            end
-          end
-        end
-        mock_class.new(parameters)
+      let(:responses) {
+        [AwsSsmEnv::FetchResult.new(parameters, 'next_token'),
+         AwsSsmEnv::FetchResult.new(parameters, nil)]
       }
 
       it 'consumer is called four times' do
