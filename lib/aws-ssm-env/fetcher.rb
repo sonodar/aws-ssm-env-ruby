@@ -36,9 +36,6 @@ module AwsSsmEnv
       loop do
         response = fetch(next_token)
         next_token = response.next_token
-        if response.parameters.empty?
-          break
-        end
         response.parameters.each do |p|
           yield(p)
         end
