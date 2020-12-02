@@ -4,6 +4,7 @@
 
 - Add ruby 2.7 to Travis CI test matrix #7
 - Fix for early abort when next_token is not null #8
+- drop ruby 2.4 support, and fix warnings #11
 
 ## 0.1.1 (2018-01-16)
 
