@@ -9,4 +9,3 @@
 
 - Translate README.
 - Added ruby 2.5 tests.
-

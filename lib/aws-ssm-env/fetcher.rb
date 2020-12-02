@@ -23,8 +23,8 @@ module AwsSsmEnv
     #
     # @see http://docs.aws.amazon.com/sdk-for-ruby/v3/api/index.html
     def initialize(**args)
-      @client = create_ssm_client(args)
-      @with_decryption = with_decryption?(args)
+      @client = create_ssm_client(**args)
+      @with_decryption = with_decryption?(**args)
     end
 
     # Iteratorパターンを実装したメソッド。AwsSsmEnv#load から呼び出される。

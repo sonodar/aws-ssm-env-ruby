@@ -149,12 +149,12 @@ module AwsSsmEnv
   #
   # @see AwsSsmEnv::Loader#load
   def load(**args)
-    AwsSsmEnv::Loader.load(args)
+    AwsSsmEnv::Loader.load(**args)
   end
 
   # `overwrite`オプションを付与した AwsSsmEnv::Loader#load の委譲メソッド。
   # @see AwsSsmEnv::Loader#load
   def load!(**args)
-    AwsSsmEnv::Loader.load(args.merge(overwrite: true))
+    AwsSsmEnv::Loader.load(**args.merge(overwrite: true))
   end
 end

@@ -10,11 +10,11 @@ module AwsSsmEnv
   class Loader
     # メイン処理。引数の詳細は AwsSsmEnv#load を参照。
     def self.load(**args)
-      new(args).load
+      new(**args).load
     end
 
     def initialize(**args)
-      parse_options(args)
+      parse_options(**args)
       if @logger
         @logger.debug("#{self.class.name} overwrite: #{@overwrite}")
         @logger.debug("#{self.class.name} fetcher: #{@fetcher}")
@@ -34,9 +34,9 @@ module AwsSsmEnv
 
     def parse_options(**options)
       @logger = options[:logger]
-      @fetcher = AwsSsmEnv::FetcherFactory.create_fetcher(options)
-      @naming_strategy = AwsSsmEnv::NamingStrategyFactory.create_naming_strategy(options)
-      @overwrite = overwrite?(options)
+      @fetcher = AwsSsmEnv::FetcherFactory.create_fetcher(**options)
+      @naming_strategy = AwsSsmEnv::NamingStrategyFactory.create_naming_strategy(**options)
+      @overwrite = overwrite?(**options)
       if @overwrite
         @applier = :apply!
       else

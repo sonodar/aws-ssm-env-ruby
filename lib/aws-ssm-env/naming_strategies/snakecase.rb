@@ -18,8 +18,8 @@ module AwsSsmEnv
     #   アンダースコアに変換する区切り文字。デフォルトはスラッシュ('/')。 TODO: AwsSsmEnv#loadとREADMEに反映
     def initialize(**args)
       @logger = args[:logger]
-      @delimiter = detect_delimiter(args)
-      removed_prefix = detect_prefix(args).sub(%r{/\z}, '')
+      @delimiter = detect_delimiter(**args)
+      removed_prefix = detect_prefix(**args).sub(%r{/\z}, '')
       @removed_prefix = /\A#{Regexp.escape(removed_prefix)}/
       @logger.debug("#{self.class.name} removed_prefix is #{@removed_prefix}") if @logger
     end

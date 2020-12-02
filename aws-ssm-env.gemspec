@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = `git ls-files spec`.split($OUTPUT_RECORD_SEPARATOR)
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.4'
+  spec.required_ruby_version = '>= 2.5'
   spec.metadata = {
     'source_code_uri' => 'https://github.com/sonodar/aws-ssm-env-ruby',
     'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/CHANGELOG.md'
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'rubocop', '~>0.48.1'
   spec.add_development_dependency 'rubocop-rspec'
-  spec.add_development_dependency 'simplecov'
+  spec.add_development_dependency 'simplecov', '~> 0.16.1'
   spec.add_development_dependency 'simplecov-console'
 
 end
