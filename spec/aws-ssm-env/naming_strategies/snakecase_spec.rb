@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'aws-ssm-env/naming_strategies/snakecase'
 
 describe AwsSsmEnv::SnakeCaseNamingStrategy do
-  let(:strategy) { described_class.new(args) }
+  let(:strategy) { described_class.new(**args) }
   let(:name) { 'path.to.db/password' }
   let(:env_name) { strategy.parse_name(Parameter.new(name)) }
 

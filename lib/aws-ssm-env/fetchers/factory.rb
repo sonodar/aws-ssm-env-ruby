@@ -19,11 +19,11 @@ module AwsSsmEnv
         fetch_type = args[:fetch]
         case fetch_type
         when nil
-          default_fetcher(args)
+          default_fetcher(**args)
         when PATH_FETCHER
-          create_path_fetcher(args)
+          create_path_fetcher(**args)
         when BEGINS_WITH_FETCHER
-          create_begins_with_fetcher(args)
+          create_begins_with_fetcher(**args)
         else
           unless fetcher_instance?(fetch_type)
             raise ArgumentError, 'Possible values for :fetch are either :path, :begins_with, ' \
@@ -37,20 +37,20 @@ module AwsSsmEnv
 
       def default_fetcher(**args)
         if args.key?(:begins_with)
-          create_begins_with_fetcher(args)
+          create_begins_with_fetcher(**args)
         else
-          create_path_fetcher(args)
+          create_path_fetcher(**args)
         end
       end
 
       def create_path_fetcher(**args)
         require 'aws-ssm-env/fetchers/path'
-        AwsSsmEnv::PathFetcher.new(args)
+        AwsSsmEnv::PathFetcher.new(**args)
       end
 
       def create_begins_with_fetcher(**args)
         require 'aws-ssm-env/fetchers/begins_with'
-        AwsSsmEnv::BeginsWithFetcher.new(args)
+        AwsSsmEnv::BeginsWithFetcher.new(**args)
       end
 
       def fetcher_instance?(object)

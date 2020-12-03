@@ -18,13 +18,13 @@ module AwsSsmEnv
       def create_naming_strategy(**args)
         naming_strategy = args[:naming]
         if naming_strategy.nil?
-          return default_strategy(args)
+          return default_strategy(**args)
         end
         case naming_strategy
         when BASENAME_STRATEGY
-          create_basename_strategy(args)
+          create_basename_strategy(**args)
         when SNAKE_CASE_STRATEGY
-          create_snakecase_strategy(args)
+          create_snakecase_strategy(**args)
         else
           unknown_naming_strategy(naming_strategy)
         end
@@ -33,17 +33,17 @@ module AwsSsmEnv
       private
 
       def default_strategy(**args)
-        create_basename_strategy(args)
+        create_basename_strategy(**args)
       end
 
       def create_basename_strategy(**args)
         require 'aws-ssm-env/naming_strategies/basename'
-        AwsSsmEnv::BasenameNamingStrategy.new(args)
+        AwsSsmEnv::BasenameNamingStrategy.new(**args)
       end
 
       def create_snakecase_strategy(**args)
         require 'aws-ssm-env/naming_strategies/snakecase'
-        AwsSsmEnv::SnakeCaseNamingStrategy.new(args)
+        AwsSsmEnv::SnakeCaseNamingStrategy.new(**args)
       end
 
       def unknown_naming_strategy(naming_strategy)

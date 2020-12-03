@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AwsSsmEnv::NamingStrategyFactory do
   describe '#create_naming_strategy' do
-    let(:naming_strategy) { described_class.create_naming_strategy(args) }
+    let(:naming_strategy) { described_class.create_naming_strategy(**args) }
 
     context 'when naming was not set' do
       let(:args) { { naming: nil } }

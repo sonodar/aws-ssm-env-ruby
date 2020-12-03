@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'aws-ssm-env/fetchers/path'
 
 describe AwsSsmEnv::PathFetcher do
-  let(:fetcher) { described_class.new(args) }
+  let(:fetcher) { described_class.new(**args) }
   let(:args) { { path: '/path' } }
   let(:base_params) { fetcher.instance_variable_get(:'@base_params') }
 

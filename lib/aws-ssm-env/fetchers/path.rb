@@ -18,7 +18,7 @@ module AwsSsmEnv
     # @option args [Integer] :fetch_size <optional> 一度のAPI実行で取得するパラメータ数。最大10。デフォルトは10。
     def initialize(**args)
       super
-      @base_params = base_params(args)
+      @base_params = base_params(**args)
     end
 
     protected

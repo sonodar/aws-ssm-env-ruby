@@ -2,7 +2,7 @@ require 'spec_helper'
 require 'aws-ssm-env/fetchers/begins_with'
 
 describe AwsSsmEnv::BeginsWithFetcher do
-  let(:fetcher) { described_class.new(args) }
+  let(:fetcher) { described_class.new(**args) }
   let(:args) { { begins_with: [ '/foo', '/bar' ] } }
   let(:base_params) { fetcher.instance_variable_get(:'@base_params') }
   let(:parameter_filter) { base_params[:parameter_filters][0] }

@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 describe AwsSsmEnv::Fetcher do
-  let(:fetcher) { described_class.new(args) }
+  let(:fetcher) { described_class.new(**args) }
   let(:args) { {} }
   let(:client) { fetcher.send(:client) }
   let(:ssm_client_args) {

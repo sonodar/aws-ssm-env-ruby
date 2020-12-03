@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe AwsSsmEnv::FetcherFactory do
   describe '#create_fetcher' do
-    let(:fetcher) { described_class.create_fetcher(args) }
+    let(:fetcher) { described_class.create_fetcher(**args) }
 
     context 'when fetch was not set' do
       context 'when begins_with was not set' do

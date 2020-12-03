@@ -4,7 +4,7 @@ describe AwsSsmEnv::Loader do
   let(:args) { { path: '/foo' } }
 
   describe '#initialize' do
-    let(:loader) { described_class.new(args) }
+    let(:loader) { described_class.new(**args) }
 
     it 'has fetcher and naming_strategy' do
       expect(loader.instance_variable_get(:@fetcher)).to be_a(AwsSsmEnv::PathFetcher)
@@ -52,7 +52,7 @@ describe AwsSsmEnv::Loader do
         ENV['foo'] = nil
         ENV['fizz'] = 'fizz'
 
-        loader = described_class.new(args)
+        loader = described_class.new(**args)
         loader.instance_variable_set(:@fetcher,
           [ Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz') ])
 
@@ -70,7 +70,7 @@ describe AwsSsmEnv::Loader do
         ENV['foo'] = nil
         ENV['fizz'] = 'fizz'
 
-        loader = described_class.new(args)
+        loader = described_class.new(**args)
         loader.instance_variable_set(:@fetcher,
           [ Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz') ])
 
