@@ -1,5 +1,8 @@
 language: ruby
 cache: bundler
+env:
+  global:
+    - AWS_REGION="ap-northeast-1"
 rvm:
   - 2.5
   - 2.6
