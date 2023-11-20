@@ -67,7 +67,7 @@ Or, you can pass `ssm_client_args` as the argument for `AwsSsmEnv#load`:
 
 ```ruby
 AwsSsmEnv.load(
-  fetch: "/myservice/#{ENV['RAILS_ENV']}",
+  path: "/myservice/#{ENV['RAILS_ENV']}",
   ssm_client_args: {
     access_key_id: 'ACCESS_KEY_ID',
     secret_access_key: 'SECRET_ACCESS_KEY',
