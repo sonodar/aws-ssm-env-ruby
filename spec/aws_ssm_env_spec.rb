@@ -1,6 +1,17 @@
 require 'spec_helper'
 require 'logger'
 
+PARAMETERS = [
+  { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db_password", value: 'db_password', type: :SecureString },
+  { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db/username", value: 'db_username', type: :String },
+  { name: "/test/#{RUBY_VERSION}/aws-ssm-env/roles", value: 'admin,guest', type: :StringList },
+  { name: "test.#{RUBY_VERSION}.aws-ssm-env.db_password", value: 'db_password', type: :SecureString },
+  { name: "test.#{RUBY_VERSION}.aws-ssm-env.username", value: 'db_username', type: :String },
+  { name: "test.#{RUBY_VERSION}.aws-ssm-env.roles", value: 'admin,guest', type: :StringList },
+].freeze
+
+ENV_NAMES = %w[db_password username roles].freeze
+
 describe AwsSsmEnv do
   let(:ssm_client) {
     stub_responses = {
@@ -24,8 +35,8 @@ describe AwsSsmEnv do
 
         described_class.load(client: ssm_client, path: '/path')
 
-        expect(ENV['foo']).to eq('bar')
-        expect(ENV['fizz']).to eq('fizz')
+        expect(ENV.fetch('foo', nil)).to eq('bar')
+        expect(ENV.fetch('fizz', nil)).to eq('fizz')
       end
     end
 
@@ -36,8 +47,8 @@ describe AwsSsmEnv do
 
         described_class.load!(client: ssm_client, path: '/path', logger: logger)
 
-        expect(ENV['foo']).to eq('bar')
-        expect(ENV['fizz']).to eq('buzz')
+        expect(ENV.fetch('foo', nil)).to eq('bar')
+        expect(ENV.fetch('fizz', nil)).to eq('buzz')
       end
     end
   end
@@ -54,17 +65,7 @@ describe AwsSsmEnv do
   #     allowed_pattern: "AllowedPattern",
   #   })
   #
-  describe 'Integration test', integration: true do
-    PARAMETERS = [
-      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db_password", value: 'db_password', type: :SecureString },
-      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/db/username", value: 'db_username', type: :String },
-      { name: "/test/#{RUBY_VERSION}/aws-ssm-env/roles", value: 'admin,guest', type: :StringList },
-      { name: "test.#{RUBY_VERSION}.aws-ssm-env.db_password", value: 'db_password', type: :SecureString },
-      { name: "test.#{RUBY_VERSION}.aws-ssm-env.username", value: 'db_username', type: :String },
-      { name: "test.#{RUBY_VERSION}.aws-ssm-env.roles", value: 'admin,guest', type: :StringList },
-    ].freeze
-    ENV_NAMES = %w[db_password username roles].freeze
-
+  describe 'Integration test', :integration do
     def remove_env_all
       ENV_NAMES.each do |name|
         ENV[name] = nil
@@ -100,18 +101,18 @@ describe AwsSsmEnv do
       context 'when recursive is true' do
         it 'set environment variables from EC2 Parameter Store parameters' do
           described_class.load(path: "/test/#{RUBY_VERSION}/aws-ssm-env", recursive: true, logger: logger)
-          expect(ENV['db_password']).to eq('db_password')
-          expect(ENV['username']).to eq('db_username')
-          expect(ENV['roles']).to eq('admin,guest')
+          expect(ENV.fetch('db_password', nil)).to eq('db_password')
+          expect(ENV.fetch('username', nil)).to eq('db_username')
+          expect(ENV.fetch('roles', nil)).to eq('admin,guest')
         end
       end
 
       context 'when recursive is false' do
         it 'set environment variables from EC2 Parameter Store parameters' do
           described_class.load(path: "/test/#{RUBY_VERSION}/aws-ssm-env", recursive: false, logger: logger)
-          expect(ENV['db_password']).to eq('db_password')
-          expect(ENV['username']).to be_nil
-          expect(ENV['roles']).to eq('admin,guest')
+          expect(ENV.fetch('db_password', nil)).to eq('db_password')
+          expect(ENV.fetch('username', nil)).to be_nil
+          expect(ENV.fetch('roles', nil)).to eq('admin,guest')
         end
       end
     end
@@ -119,9 +120,9 @@ describe AwsSsmEnv do
     describe 'begins_with fetcher' do
       it 'set environment variables from EC2 Parameter Store parameters' do
         described_class.load(begins_with: "test.#{RUBY_VERSION}.aws-ssm-env.", naming: :snakecase, delimiter: '.', logger: logger)
-        expect(ENV['DB_PASSWORD']).to eq('db_password')
-        expect(ENV['USERNAME']).to eq('db_username')
-        expect(ENV['ROLES']).to eq('admin,guest')
+        expect(ENV.fetch('DB_PASSWORD', nil)).to eq('db_password')
+        expect(ENV.fetch('USERNAME', nil)).to eq('db_username')
+        expect(ENV.fetch('ROLES', nil)).to eq('admin,guest')
       end
     end
   end

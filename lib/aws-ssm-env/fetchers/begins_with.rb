@@ -44,6 +44,7 @@ module AwsSsmEnv
       if begins_with.nil?
         raise ArgumentError, ':begins_with is required.'
       end
+
       {
         parameter_filters: to_parameter_filters(begins_with),
         max_results: detect_max_results(fetch_size)
@@ -51,9 +52,7 @@ module AwsSsmEnv
     end
 
     def detect_max_results(fetch_size)
-      if fetch_size.nil?
-        MAX_FETCH_SIZE
-      elsif fetch_size.to_i > MAX_FETCH_SIZE
+      if fetch_size.nil? || fetch_size.to_i > MAX_FETCH_SIZE
         MAX_FETCH_SIZE
       else
         fetch_size.to_i
@@ -62,7 +61,7 @@ module AwsSsmEnv
 
     def to_parameter_filters(begins_with)
       values = Array(begins_with)
-      [ BASE_FILTER.merge(values: values) ]
+      [BASE_FILTER.merge(values: values)]
     end
 
     def fetch_params(next_token)

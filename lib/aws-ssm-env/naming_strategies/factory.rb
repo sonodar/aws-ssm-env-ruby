@@ -20,6 +20,7 @@ module AwsSsmEnv
         if naming_strategy.nil?
           return default_strategy(**args)
         end
+
         case naming_strategy
         when BASENAME_STRATEGY
           create_basename_strategy(**args)
@@ -48,19 +49,18 @@ module AwsSsmEnv
 
       def unknown_naming_strategy(naming_strategy)
         unless naming_strategy_instance?(naming_strategy)
-          raise ArgumentError, 'Possible values for :naming are either :basename, :snakecase, ' \
-                + '"AwsSsmEnv::NamingStrategy" implementation class, an object with "parse_name" method.'
+          raise ArgumentError,
+                'Possible values for :naming are either :basename, :snakecase, "AwsSsmEnv::NamingStrategy" implementation class, an object with "parse_name" method.' # rubocop:disable Layout/LineLength
         end
+
         naming_strategy
       end
 
       def naming_strategy_instance?(object)
         if object.is_a?(AwsSsmEnv::NamingStrategy)
           true
-        elsif object.respond_to?(:parse_name)
-          true
         else
-          false
+          object.respond_to?(:parse_name)
         end
       end
     end

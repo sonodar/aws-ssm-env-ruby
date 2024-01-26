@@ -31,14 +31,12 @@ module AwsSsmEnv
     # 実際のパラメータ取得はサブクラスで実装された fetch メソッドで行う。
     # @yield [consumer] 取得したパラメータを受け取って処理を行うブロック引数。
     # @yieldparam [Aws::SSM::Types::Parameter] parameter パラメータ
-    def each
+    def each(&block)
       next_token = nil
       loop do
         response = fetch(next_token)
         next_token = response.next_token
-        response.parameters.each do |p|
-          yield(p)
-        end
+        response.parameters.each(&block)
         if next_token.nil?
           break
         end
@@ -77,10 +75,8 @@ module AwsSsmEnv
     def with_decryption?(decryption: 'true', **)
       if decryption.nil?
         true
-      elsif decryption.to_s.downcase == 'true'
-        true
       else
-        false
+        decryption.to_s.downcase == 'true'
       end
     end
 

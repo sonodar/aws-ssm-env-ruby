@@ -26,9 +26,10 @@ module AwsSsmEnv
           create_begins_with_fetcher(**args)
         else
           unless fetcher_instance?(fetch_type)
-            raise ArgumentError, 'Possible values for :fetch are either :path, :begins_with, ' \
-                + '"AwsSsmEnv::Fetcher" implementation class, an object with "each" method.'
+            raise ArgumentError,
+                  'Possible values for :fetch are either :path, :begins_with, "AwsSsmEnv::Fetcher" implementation class, an object with "each" method.' # rubocop:disable Layout/LineLength
           end
+
           fetch_type
         end
       end
@@ -54,13 +55,7 @@ module AwsSsmEnv
       end
 
       def fetcher_instance?(object)
-        if object.is_a?(AwsSsmEnv::Fetcher)
-          true
-        elsif object.respond_to?(:each)
-          true
-        else
-          false
-        end
+        object.is_a?(AwsSsmEnv::Fetcher) || object.respond_to?(:each)
       end
     end
   end

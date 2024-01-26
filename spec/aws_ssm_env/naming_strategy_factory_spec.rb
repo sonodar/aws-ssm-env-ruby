@@ -48,7 +48,7 @@ describe AwsSsmEnv::NamingStrategyFactory do
       end
     end
 
-    context 'in other cases' do
+    context 'when in other cases' do
       it 'raise error' do
         expect { described_class.create_naming_strategy(naming: 'foo') }.to raise_error(ArgumentError)
       end

@@ -38,6 +38,7 @@ module AwsSsmEnv
       if path.nil?
         raise ArgumentError, 'path is required.'
       end
+
       {
         path: path,
         recursive: recursive?(recursive),
@@ -47,17 +48,11 @@ module AwsSsmEnv
     end
 
     def recursive?(recursive)
-      if recursive.to_s.downcase == 'true'
-        true
-      else
-        false
-      end
+      recursive.to_s.downcase == 'true'
     end
 
     def detect_max_results(fetch_size)
-      if fetch_size.nil?
-        MAX_FETCH_SIZE
-      elsif fetch_size.to_i > 10
+      if fetch_size.nil? || fetch_size.to_i > 10
         MAX_FETCH_SIZE
       else
         fetch_size.to_i
