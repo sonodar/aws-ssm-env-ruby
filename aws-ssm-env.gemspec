@@ -15,7 +15,7 @@ Gem::Specification.new do |spec|
   spec.test_files    = `git ls-files spec`.split($OUTPUT_RECORD_SEPARATOR)
   spec.require_paths = ['lib']
 
-  spec.required_ruby_version = '>= 2.5'
+  spec.required_ruby_version = '>= 2.7'
   spec.metadata = {
     'source_code_uri' => 'https://github.com/sonodar/aws-ssm-env-ruby',
     'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/CHANGELOG.md'

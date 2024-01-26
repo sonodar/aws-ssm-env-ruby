@@ -16,7 +16,7 @@ The naming of environment variables is optional and can be customized.
 
 ## Installation
 
-This gem has been tested with ruby version 2.5 to 2.7.
+This gem has been tested with ruby version 2.7 to 3.3.
 
 ```
 gem install aws-ssm-env
