@@ -25,7 +25,7 @@ module AwsSsmEnv
     def load
       @fetcher.each do |parameter|
         var_name = @naming_strategy.parse_name(parameter)
-        @logger.debug("#{self.class.name} #{parameter.name} parameter value into ENV['#{var_name}']") if @logger
+        @logger&.debug("#{self.class.name} #{parameter.name} parameter value into ENV['#{var_name}']")
         send(@applier, var_name, parameter.value)
       end
     end
@@ -57,6 +57,7 @@ module AwsSsmEnv
       if ENV[name]
         return
       end
+
       apply!(name, value)
     end
 

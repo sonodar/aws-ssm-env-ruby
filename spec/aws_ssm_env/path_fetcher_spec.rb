@@ -4,7 +4,7 @@ require 'aws-ssm-env/fetchers/path'
 describe AwsSsmEnv::PathFetcher do
   let(:fetcher) { described_class.new(**args) }
   let(:args) { { path: '/path' } }
-  let(:base_params) { fetcher.instance_variable_get(:'@base_params') }
+  let(:base_params) { fetcher.instance_variable_get(:@base_params) }
 
   describe '#initialize' do
     context 'when path was not set' do

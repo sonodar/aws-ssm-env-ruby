@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 0.1.3 (2024-01-29)
+
+- Change ruby supported versions #14
+
 ## 0.1.2 (2020-12-02)
 
 - Add ruby 2.7 to Travis CI test matrix #7

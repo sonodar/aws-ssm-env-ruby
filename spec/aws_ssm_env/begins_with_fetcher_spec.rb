@@ -3,8 +3,8 @@ require 'aws-ssm-env/fetchers/begins_with'
 
 describe AwsSsmEnv::BeginsWithFetcher do
   let(:fetcher) { described_class.new(**args) }
-  let(:args) { { begins_with: [ '/foo', '/bar' ] } }
-  let(:base_params) { fetcher.instance_variable_get(:'@base_params') }
+  let(:args) { { begins_with: ['/foo', '/bar'] } }
+  let(:base_params) { fetcher.instance_variable_get(:@base_params) }
   let(:parameter_filter) { base_params[:parameter_filters][0] }
 
   describe '#initialize' do
@@ -24,7 +24,7 @@ describe AwsSsmEnv::BeginsWithFetcher do
       let(:args) { { begins_with: '/foo' } }
 
       it 'parameter_filter[:values] is [ begins_with value ]' do
-        expect(parameter_filter[:values]).to eq([ args[:begins_with] ])
+        expect(parameter_filter[:values]).to eq([args[:begins_with]])
       end
     end
 
@@ -84,7 +84,7 @@ describe AwsSsmEnv::BeginsWithFetcher do
     end
 
     context 'when describe_parameters return not empty parameters' do
-      let!(:dummy_parameters) { [ Parameter.new('foo'), Parameter.new('bar') ] }
+      let!(:dummy_parameters) { [Parameter.new('foo'), Parameter.new('bar')] }
       let!(:dummy_response) { AwsSsmEnv::FetchResult.new(dummy_parameters, 'next_token') }
 
       before do

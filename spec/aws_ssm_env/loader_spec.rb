@@ -54,12 +54,12 @@ describe AwsSsmEnv::Loader do
 
         loader = described_class.new(**args)
         loader.instance_variable_set(:@fetcher,
-          [ Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz') ])
+                                     [Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz')])
 
         loader.load
 
-        expect(ENV['foo']).to eq('bar')
-        expect(ENV['fizz']).to eq('fizz')
+        expect(ENV.fetch('foo', nil)).to eq('bar')
+        expect(ENV.fetch('fizz', nil)).to eq('fizz')
       end
     end
 
@@ -72,12 +72,12 @@ describe AwsSsmEnv::Loader do
 
         loader = described_class.new(**args)
         loader.instance_variable_set(:@fetcher,
-          [ Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz') ])
+                                     [Parameter.new('foo', 'bar'), Parameter.new('fizz', 'buzz')])
 
         loader.load
 
-        expect(ENV['foo']).to eq('bar')
-        expect(ENV['fizz']).to eq('buzz')
+        expect(ENV.fetch('foo', nil)).to eq('bar')
+        expect(ENV.fetch('fizz', nil)).to eq('buzz')
       end
     end
   end

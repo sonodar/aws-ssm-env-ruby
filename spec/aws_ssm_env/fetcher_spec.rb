@@ -83,11 +83,17 @@ describe AwsSsmEnv::Fetcher do
   end
 
   describe '#each' do
-    let(:parameters) { [ Parameter.new('foo', 'foo'), Parameter.new('bar', 'bar') ] }
+    let(:parameters) { [Parameter.new('foo', 'foo'), Parameter.new('bar', 'bar')] }
     let(:fetcher) {
       mock_class = Class.new(described_class) do
-        def initialize(responses); @responses = responses; end
-        protected def fetch(_); @responses.shift; end
+        def initialize(responses)
+          super()
+          @responses = responses
+        end
+
+        protected
+
+        def fetch(_); @responses.shift; end
       end
       mock_class.new(responses)
     }
@@ -110,8 +116,8 @@ describe AwsSsmEnv::Fetcher do
 
     context 'when fetch returns empty params and next_token at first, fetch returns two parameters and empty next_token at second' do
       let(:responses) {
-        [ AwsSsmEnv::FetchResult.new([], 'next_token'),
-          AwsSsmEnv::FetchResult.new(parameters, nil)]
+        [AwsSsmEnv::FetchResult.new([], 'next_token'),
+         AwsSsmEnv::FetchResult.new(parameters, nil)]
       }
 
       it 'consumer is called twice' do

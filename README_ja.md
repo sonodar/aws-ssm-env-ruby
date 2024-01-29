@@ -13,7 +13,7 @@ AWS EC2 Parameter Storeから取得したパラメータを環境変数として
 
 ## Installation
 
-このgemはRuby2.5から2.7まででテストされています。
+このgemはRuby2.7から3.3まででテストされています。
 
 ```
 gem install aws-ssm-env

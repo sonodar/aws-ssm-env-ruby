@@ -2,14 +2,13 @@ require: rubocop-rspec
 
 AllCops:
   DisplayCopNames: true
+  NewCops: enable
+  SuggestExtensions: false
   Exclude:
     - vendor/**/*
     - aws-ssm-env.gemspec
 
-AsciiComments:
-  Enabled: false
-
-Style/FileName:
+Naming/FileName:
   Exclude:
     - '**/aws-ssm-env*.rb'
 
@@ -22,18 +21,14 @@ Style/TrivialAccessors:
 Style/IfUnlessModifier:
   Enabled: false
 
-Style/SpaceInsideBrackets:
-  Enabled: false
-
 Style/BlockDelimiters:
   Enabled: false
 
-Style/TrailingCommaInLiteral:
+Style/TrailingCommaInArrayLiteral:
   Enabled: false
 
-Style/AlignParameters:
-  Exclude:
-    - 'spec/**/*.rb'
+Style/TrailingCommaInHashLiteral:
+  Enabled: false
 
 Style/Semicolon:
   Exclude:
@@ -45,7 +40,7 @@ Style/ConditionalAssignment:
 Style/GuardClause:
   MinBodyLength: 4
 
-Metrics/LineLength:
+Layout/LineLength:
   Max: 120
   Exclude:
     - 'spec/**/*.rb'
@@ -56,9 +51,6 @@ Metrics/MethodLength:
 Metrics/BlockLength:
   Exclude:
     - 'spec/**/*.rb'
-
-Performance/Casecmp:
-  Enabled: false
 
 RSpec/FilePath:
   Enabled: false
@@ -83,4 +75,19 @@ RSpec/MultipleExpectations:
 
 # don't use closable resource
 RSpec/BeforeAfterAll:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Style/MinMaxComparison:
+  Enabled: false
+
+RSpec/MultipleMemoizedHelpers:
+  Enabled: false
+
+Style/HashSyntax:
+  Enabled: false
+
+Style/ArgumentsForwarding:
   Enabled: false

@@ -15,7 +15,7 @@ else
 end
 
 require 'aws-ssm-env'
-require 'aws-ssm-env/parameter'
+require 'aws_ssm_env/parameter'
 
 RSpec.configure do |config|
   config.filter_run_excluding(integration: true)
