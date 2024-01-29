@@ -2,11 +2,9 @@ name: rspec
 
 on:
   push:
-    branches:
-      - master
+    branches: [master]
   pull_request:
-    branches:
-      - master
+    types: [opened, reopened]
 
 jobs:
   runs-on: ubuntu-latest
