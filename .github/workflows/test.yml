@@ -6,6 +6,9 @@ on:
   pull_request:
     types: [opened, reopened]
 
+env:
+  AWS_REGION: ap-northeast-1
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -20,5 +23,4 @@ jobs:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
       - name: Run rspec
-        run: |
-            bundle exec rspec
+        run: bundle exec rspec
