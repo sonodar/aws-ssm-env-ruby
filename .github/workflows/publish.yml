@@ -20,6 +20,11 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
+      - name: Configure Git
+        run: |
+          git config --global user.name "${GITHUB_ACTOR}"
+          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
+
       - name: Publish to gem registry
         run: bundle exec rake release
         env:
