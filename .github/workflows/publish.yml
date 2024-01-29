@@ -3,7 +3,7 @@ name: Publish
 on:
   push:
     tags:
-      - '*.*.*'
+      - "v*.*.*"
 
 jobs:
   release:
@@ -20,12 +20,14 @@ jobs:
           ruby-version: '3.1'
           bundler-cache: true
 
-      - name: Configure Git
+      # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-ruby#publishing-gems
+      - name: Publish to RubyGems
         run: |
-          git config --global user.name "${GITHUB_ACTOR}"
-          git config --global user.email "${GITHUB_ACTOR}@users.noreply.github.com"
-
-      - name: Publish to gem registry
-        run: bundle exec rake release
+          mkdir -p $HOME/.gem
+          touch $HOME/.gem/credentials
+          chmod 0600 $HOME/.gem/credentials
+          printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
+          gem build *.gemspec
+          gem push *.gem
         env:
-          GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+          GEM_HOST_API_KEY: "${{secrets.GEM_HOST_API_KEY}}"

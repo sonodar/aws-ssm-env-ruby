@@ -23,11 +23,11 @@ Gem::Specification.new do |spec|
 
   spec.add_dependency 'aws-sdk-ssm', '~>1'
 
-  spec.add_development_dependency 'rake'
-  spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'rake', '~> 13.1.0'
+  spec.add_development_dependency 'rspec', '~> 3.12.0'
   spec.add_development_dependency 'rubocop', '~> 1.60.2'
-  spec.add_development_dependency 'rubocop-rspec'
-  spec.add_development_dependency 'simplecov'
-  spec.add_development_dependency 'simplecov-console'
+  spec.add_development_dependency 'rubocop-rspec', '~> 2.26.1'
+  spec.add_development_dependency 'simplecov', '~> 0.16.1'
+  spec.add_development_dependency 'simplecov-console', '~> 0.9.1'
 
 end
