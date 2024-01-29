@@ -1,4 +1,4 @@
-name: rspec
+name: Test
 
 on:
   push:
@@ -7,17 +7,18 @@ on:
     types: [opened, reopened]
 
 jobs:
-  runs-on: ubuntu-latest
-  strategy:
-    matrix:
-      ruby-version: ['2.5', '2.6', '2.7']
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        ruby-version: ['2.5', '2.6', '2.7']
 
-  steps:
-    - uses: actions/checkout@v4
-    - uses: ruby/setup-ruby@v1
-      with:
-        ruby-version: ${{ matrix.ruby }}
-        bundler-cache: true
-    - name: Run rspec
-      run: |
-          bundle exec rspec
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Run rspec
+        run: |
+            bundle exec rspec
