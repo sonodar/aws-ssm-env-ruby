@@ -1,9 +1,16 @@
+# refs: https://ybiquitous.me/blog/2022/release-gem-using-github-actions
 name: Publish
 
 on:
-  push:
-    tags:
-      - "v*.*.*"
+  workflow_dispatch:
+    inputs:
+      otp:
+        description: "One-time password for RubyGems.org"
+        required: true
+
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
 
 jobs:
   release:
@@ -28,6 +35,7 @@ jobs:
           chmod 0600 $HOME/.gem/credentials
           printf -- "---\n:rubygems_api_key: ${GEM_HOST_API_KEY}\n" > $HOME/.gem/credentials
           gem build *.gemspec
-          gem push *.gem
+          gem push --otp "${GEM_HOST_OTP_CODE}" *.gem
         env:
           GEM_HOST_API_KEY: "${{secrets.GEM_HOST_API_KEY}}"
+          GEM_HOST_OTP_CODE: "${{ inputs.otp }}"
