@@ -4,7 +4,10 @@ on:
   push:
     branches: [master]
   pull_request:
-    types: [opened, reopened]
+    paths:
+      - 'Gemfile.lock'
+      - '**/*.rb'
+      - '.github/workflows/test.yml'
 
 env:
   AWS_REGION: ap-northeast-1

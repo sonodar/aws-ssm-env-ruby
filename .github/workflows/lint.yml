@@ -4,7 +4,11 @@ on:
   push:
     branches: [master]
   pull_request:
-    types: [opened, reopened]
+    paths:
+      - '.rubocop.yml'
+      - 'Gemfile.lock'
+      - '**/*.rb'
+      - '.github/workflows/lint.yml'
 
 jobs:
   lint:
