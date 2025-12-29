@@ -1,5 +1,9 @@
 require: rubocop-rspec
 
+# FactoryBotを使用していないため無効化
+FactoryBot:
+  Enabled: false
+
 AllCops:
   DisplayCopNames: true
   NewCops: enable
