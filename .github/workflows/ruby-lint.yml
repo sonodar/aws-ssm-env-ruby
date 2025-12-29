@@ -1,19 +1,22 @@
-name: Test
+name: Ruby Lint
 
 on:
   push:
     branches: [master]
+    paths:
+      - 'ruby/**'
+      - '.github/workflows/ruby-lint.yml'
   pull_request:
     paths:
-      - 'Gemfile.lock'
-      - '**/*.rb'
-      - '.github/workflows/test.yml'
+      - 'ruby/**'
+      - '.github/workflows/ruby-lint.yml'
 
-env:
-  AWS_REGION: ap-northeast-1
+defaults:
+  run:
+    working-directory: ruby
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -29,5 +32,6 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby-version }}
           bundler-cache: true
-      - name: Run rspec
-        run: bundle exec rspec
+          working-directory: ruby
+      - name: Run rubocop
+        run: bundle exec rubocop
