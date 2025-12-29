@@ -1,4 +1,4 @@
-require File.expand_path('../lib/aws-ssm-env/version', __FILE__)
+require File.expand_path('lib/aws-ssm-env/version', __dir__)
 
 Gem::Specification.new do |spec|
 
@@ -11,14 +11,15 @@ Gem::Specification.new do |spec|
   spec.email         = [ 'ryohei-sonoda@m3.com' ]
   spec.license       = 'Apache-2.0'
 
-  spec.files         = `git ls-files README.md README_ja.md CHANGELOG.md LICENSE lib`.split($OUTPUT_RECORD_SEPARATOR)
-  spec.test_files    = `git ls-files spec`.split($OUTPUT_RECORD_SEPARATOR)
+  spec.files         = Dir.chdir(__dir__) do
+    Dir.glob('{lib/**/*,README.md,README_ja.md,CHANGELOG.md,LICENSE}')
+  end
   spec.require_paths = ['lib']
 
   spec.required_ruby_version = '>= 2.7'
   spec.metadata = {
-    'source_code_uri' => 'https://github.com/sonodar/aws-ssm-env-ruby',
-    'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/CHANGELOG.md'
+    'source_code_uri' => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/ruby',
+    'changelog_uri'   => 'https://github.com/sonodar/aws-ssm-env-ruby/tree/master/ruby/CHANGELOG.md'
   }
 
   spec.add_dependency 'aws-sdk-ssm', '~>1'

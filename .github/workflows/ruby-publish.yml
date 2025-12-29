@@ -1,5 +1,5 @@
 # refs: https://ybiquitous.me/blog/2022/release-gem-using-github-actions
-name: Publish
+name: Ruby Publish
 
 on:
   workflow_dispatch:
@@ -7,6 +7,10 @@ on:
       otp:
         description: "One-time password for RubyGems.org"
         required: true
+
+defaults:
+  run:
+    working-directory: ruby
 
 concurrency:
   group: ${{ github.workflow }}
@@ -26,6 +30,7 @@ jobs:
         with:
           ruby-version: '3.1'
           bundler-cache: true
+          working-directory: ruby
 
       # https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-ruby#publishing-gems
       - name: Publish to RubyGems
